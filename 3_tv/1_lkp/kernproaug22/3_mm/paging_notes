@@ -1,0 +1,32 @@
+   
+	 
+    PAGING :
+    
+    -	The process of retrieving processes in the form of pages from the secondary storage into the main memory is known as paging.
+    
+    -	Paging is a storage mechanism that allows OS to retrieve processes from the secondary storage into the main memory in the form of pages.
+    
+    -	Paging is a memory management scheme that eliminates the need for contiguous allocation of physical memory.
+    
+    PAGE FAULT:
+    
+    -	A page fault occurs when a process tries to access a page of memory that is not currently in physical memory.
+    
+    -	When a page fault occurs, the Linux kernel retrieves the missing page from secondary storage and maps it to a physical address in memory.
+    
+    -	A page fault is an event that occurs when a program requests data from a page in memory that is not currently in physical memory. 
+    	When this happens, the operating system must retrieve the data from secondary storage (such as a hard disk) and 
+    	load it into physical memory. This process is called "page fault handling."
+    
+    DEMAND PAGING:
+    
+    -	Demand paging is a technique used by operating systems to optimize memory usage by only loading pages into physical memory 
+    	when they are actually needed.
+    	
+    -	With demand paging, the operating system initially loads only a small portion of a program 
+    	into physical memory and then loads additional pages as they are accessed. 
+    	
+    -	This allows the operating system to keep more programs running simultaneously, as it only loads the pages that are actually 
+    	needed at any given time.
+    	
+ _______________________________________________________________________________________________________________________________________________

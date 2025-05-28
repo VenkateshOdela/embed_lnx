@@ -1,0 +1,22 @@
+Mandatory Pre-Defined Macros
+
+__FILE__, which gives the file name of the current source file (a string literal),
+__LINE__ for the current line number (an integer constant),
+__DATE__ for the compilation date (a string literal),
+__TIME__ for the compilation time (a string literal).
+There's also a related predefined identifier, __func__ (ISO/IEC 9899:2011 §6.4.2.2), which is not a macro:
+
+The identifier __func__ shall be implicitly declared by the translator as if, immediately following the opening brace of each function definition, the declaration:
+
+ static const char __func__[] = "function-name";
+appeared, where function-name is the name of the lexically-enclosing function.
+
+__FILE__, __LINE__ and __func__ are especially useful for debugging purposes. For example:
+
+fprintf(stderr, "%s: %s: %d: Denominator is 0", __FILE__, __func__, __LINE__);
+Pre-C99 compilers, may or may not support __func__ or may have a macro that acts the same that is named differently. For example, gcc used __FUNCTION__ in C89 mode.
+
+The below macros allow to ask for detail on the implementation:
+
+__STDC_VERSION__ The version of the C Standard implemented. This is a constant integer using the format yyyymmL (the value 201112L for C11, the value 199901L for C99; it wasn't defined for C89/C90)
+__STDC__ If 1, the implementation conforms to the C Standard.

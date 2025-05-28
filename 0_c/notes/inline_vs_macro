@@ -1,0 +1,12 @@
+
+Inline functions and macros are both ways to improve the performance of programs by reducing the overhead of function calls. However, they differ in several important ways:
+
+Type checking: Inline functions are type-checked by the compiler, whereas macros are not. This means that inline functions can catch errors related to incorrect types, while macros can potentially introduce errors if the macro code does not match the surrounding code.
+
+Scoping: Inline functions obey the scoping rules of C++, while macros do not. This means that variables and other symbols defined within an inline function are only visible within that function, while macros can introduce symbols into the global namespace.
+
+Debugging: Inline functions can be stepped through with a debugger, while macros cannot. This makes it easier to find and fix errors in inline functions.
+
+Compile time vs. run time: Macros are expanded at compile time, while inline functions are expanded at run time. This means that macros can be faster than inline functions in some cases, but they can also make the resulting code larger and harder to understand.
+
+Overall, inline functions are generally preferred over macros in modern C++ code, because they offer better type checking, scoping, and debugging support. However, macros can still be useful in certain cases, such as when implementing simple control structures or optimizing performance-critical code.

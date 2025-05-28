@@ -1,0 +1,44 @@
+Consider a system with eight CPUs. One big task has a utilization close to 90% of one CPU, 
+while a set of many other tasks have a lower utilization. 
+
+In this environment, one recommended setup would be to isolate CPU0 to run the high-utilization task while allowing the other tasks to 
+run in the remaining CPUs. To configure this environment, the user must follow the following steps:
+
+    Enter in the cpuset directory and create two cpusets:
+
+        # cd /sys/fs/cgroup/cpuset/
+        # mkdir cluster
+        # mkdir partition
+
+    Disable load balancing in the root cpuset to create two new root domains in the CPU sets:
+
+        # echo 0 > cpuset.sched_load_balance
+
+    Enter the directory for the cluster cpuset, set the CPUs available to 1-7, the memory node the set should run in 
+   (in this case the system is not NUMA, so it is always node zero), and set the cpuset to the exclusive mode.
+
+        # cd cluster/
+        # echo 1-7 > cpuset.cpus
+        # echo 0 > cpuset.mems
+        # echo 1 > cpuset.cpu_exclusive 
+
+    Move all tasks to this CPU set
+
+        # ps -eLo lwp | while read thread; do echo $thread > tasks ; done
+
+    Then it is possible to start deadline tasks in this cpuset.
+    Configure the partition cpuset:
+
+        # cd ../partition/
+        # echo 1 > cpuset.cpu_exclusive 
+        # echo 0 > cpuset.mems 
+        # echo 0 > cpuset.cpus
+
+    Finally move the shell to the partition cpuset.
+
+        # echo $$ > tasks 
+
+    The final step is to run the deadline workload. 
+
+ With this setup, the task isolated in the partitioned cpuset will not interfere with the tasks in the cluster cpuset, 
+ increasing the system’s maximum load while meeting the deadline of real-time tasks. 

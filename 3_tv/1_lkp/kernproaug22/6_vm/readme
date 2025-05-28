@@ -1,0 +1,127 @@
+
+vm subsytem :
+
+Chapter 12,“Memory Management,” looked at how the kernel manages physical memory. 
+In addition to managing its own memory, the kernel also has to manage the memory
+of user-space processes.This memory is called the process address space,
+
+-- malloc vs kmalloc
+   - malloc and kmalloc memory allocations mechanisms are different.
+   
+   - malloc :
+     App -> VM ->             Userspace Memory Management        -> Buddy system -> physical Memory;
+     
+   - kmalloc :
+     App -> Kernel Service -> Kernel Dynamic Memory Allocations
+                              (Cache Allocator,Slab Allocator,
+                               DMA Mapping, CMA/GCMA)           -> Buddy System -> Physical Memory;
+
+   - for every application there is a PCB, 
+   - and for every application, as memory destructor struct mm_struct;
+   
+   -- struct task_struct  --> struct mm_struct
+   
+ The Memory Descriptor :
+   -- The kernel represents a process’s address space with a data structure called the memory descriptor.
+      This structure contains all the information related to the process address space.
+      The memory descriptor is represented by 'struct mm_struct' and defined in <linux/mm_types.h >.
+      
+   -- struct mm_struct {
+         struct vm_area_struct *mmap;/* list of memory areas */
+         ...
+         ...
+         }
+      
+   -- Page Table.
+   
+ 
+ Virtual Memory Areas :
+   -- The memory area structure, vm_area_struct, represents memory areas. It is defined in
+      <linux/mm_types.h> . In the Linux kernel, memory areas are often called virtual memory
+      areas (abbreviated VMAs).
+      
+   -- The vm_area_struct structure describes a single memory area over a contiguous
+      interval in a given address space.
+      
+ VMA Flags :
+   -- 
+   
+  VMA and Dynamic Mapping :
+  --malloc - user space 
+  -- malloc -> brk()
+  -- brk will expand the heap in RAM
+  -- RSS Resident SIze;
+  --  
+  
+  VM Maps :
+             
+              APP
+     ..................................         
+               |
+            do_mmap()
+               |
+            alloc_pages()
+               |
+            Buddy System
+               |
+     .......................................       
+            Physical Memory
+            
+  Page Table :
+  
+    -- Linux enables paging early in  the boot process
+       
+        -- All memory accesses made by the CPU are virtual and translated to physical
+           addresses through the page tables.
+           
+        -- Linux set the page tables and the translation is made automically by the hardware(MMU)
+           according to the page tables content.
+           
+     -- for every process, there is memory descriptor struct mm_struct :
+     
+     -- for different applications(task_struct) there are different struct mm pagetable.
+     -- but for multithreads, for different with in application have same mm page table.
+     
+   -Single Level Page Table
+     -- consider 32 bit system, 20bit+12bit( 20 bit virtual page number + 12 bit page offset) = physical address
+    
+     --  for 32 bit systems , 3GB is for user space, how many records needed ?  = 3GB/4K = 3MB
+         -- 
+   -Multi Level Page Table
+     -- 20 (top level)+20(lower level)+12 
+     
+   - Five Level Page Table :
+     -- pdg_t
+     -- p4d_t
+     -- pud_t
+     -- pmd_t
+     -- pte_t
+     
+  -- CPU is always in virtual mode when it started running to CPU stopped;
+  
+  -- HUGE Pages;
+  -- for Allocating huge page allcoation:
+  -- Multi Page Size Support :
+     --same process can have mutliple page sizes
+       -- All depends on how page table is organized
+     -- Strategy : Collapse page tables starting from lowes level(pte)
+       -- pte level is removed and pmd addresss 21bits = 2MB (PHYSICAL frame size)
+       -- pte and pmd are removed, pud addresses 30 bits = 1GB (Physical Frame Size)
+       
+   -- in ARm it is 3 level paging only; 
+   
+   -- RAM size? and that much size address spaces?
+   
+   -- CONFIG_PGTABLE_LEVEL=5 is present in .config of kernel configuration;
+   
+   
+  
+     
+     
+   
+   
+   
+   
+   
+   
+   

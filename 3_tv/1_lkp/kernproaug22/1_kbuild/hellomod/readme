@@ -1,0 +1,55 @@
+
+Building Out of tree kernel module :
+
+	make -C <path to linux kernel tree> M=<path to your module> [target]
+
+	make -C $KDIR M=$PWD [Targets]
+
+		-C $KDIR: The directory where the kernel source is located.
+           	"make" will actually change to the specified directory when
+          	executing and will change back when finished.
+
+		M=$PWD: Informs kbuild that an external module is being built. 
+        	The value given to "M" is the absolute path of the directory 
+        	where the external module(kbuild file) is located.
+        
+			• modules :The default target for external modules. It has the same functionality
+			as if no target was specified.
+
+			• modules_install: Install the external module(s). The default location is
+			/lib/modules/<kernel_release>/extra/, but a prefix may be added with
+			INSTALL_MOD_PATH
+
+			• clean : Remove all generated files in the module directory only.
+
+			• help:List the available targets for external modules
+__________________________________________________________________________________________________
+
+Creating a local Makefile :
+
+	In the local makefile you should define a kbuild variable like below
+		obj-<X> := <module_name>.o
+		Here obj-<X> is kbuild variable and ‘X’ takes one of the below values
+		X = n, Do not compile the module
+		X = y, Compile the module and link with kernel image
+		X = m, Compile as dynamically loadable kernel module
+
+	Creating a local Makefile
+	obj-m := main.o
+	The kbuild system will build main.o from main.c and after linking, will result in the
+	kernel module main.ko
+_____________________________________________________________________________________
+
+Example : 
+
+make -C <path to linux kernel tree> M=<path to your module> [target]
+
+$make -C $KDIR M=$PWD [Targets]
+
+$make -C /lib/modules/5.4.0-124-generic/build M=$PWD modules
+
+user@ubuntu:~/lkp/kernproaug22$ uname -r
+5.4.0-124-generic
+
+/lib/modules/$(shell uname -r)/build
+/lib/modules/5.4.0-124-generic/build

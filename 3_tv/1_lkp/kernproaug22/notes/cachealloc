@@ -1,0 +1,32 @@
+Cache allocator provides several advantages.
+
+1. Lesser memory consumption per object.
+
+   When allocate objects from own cache allocator, the actual allocated size could be less than one allocated by kmalloc. 
+   This is because every cache allocator may allocate object only of a specific size. kmalloc allocate objects from the 
+   cache allocators too, but it uses allocator of predefined sizes. Say, kmalloc has allocators for 4K and 8K sizes. 
+   When it allocates object of size e.g. 5K, it uses 8K allocator. That is 3K of allocation space is just a waste.
+
+2. Localization of failures.
+
+   If your own cache will be corrupted (e.g. by double-free), this corruption will affect only an allocation of 
+   your own objects. There is a high chance that other allocators remain functional.
+
+3. Easier debugging of failures.
+
+   If Linux kernel reports about corruption of your own cache allocator, then you know where debugging should be 
+   started from: most likely it is the code which works with the given cache.
+
+4. Clever initialization on allocations.
+
+   When allocate the object, you most likely want it to be initialized, that is set its field into initial values. 
+   Normally (when use kmalloc) you need to initialize object every time it is allocated. But if your object's fields 
+   have initial values at the time you free the object, you no longer need to initialize that object would it be 
+   allocated again. Cache allocator provides ability to omit initialization of already initialized object via its 
+   constructor (ctor parameter). 
+
+   If an object is allocated first time, the constructor is called automatically. 
+   If an object has been allocated before (and freed), the constructor is not called.
+
+   E.g., ext4 filesystem uses constructors for initialization of its core data structures like inodes
+

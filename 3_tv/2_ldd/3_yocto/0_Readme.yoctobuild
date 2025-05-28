@@ -1,0 +1,602 @@
+Yocto Build system pre-requisites and setup
+===========================================
+
+install following pre-requisite packages on host
+
+$ sudo apt install gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect 
+$ sudo apt install xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm python3-subunit mesa-common-dev zstd liblz4-tool	
+
+Clone yocto build system repositories
+=====================================
+
+$ git clone git://git.yoctoproject.org/poky
+$ cd poky
+$ git checkout -t origin/langdale -b my-langdale
+  - user@ubuntu:~/poky$ git checkout -t origin/langdale -b my-langdale
+	Branch 'my-langdale' set up to track remote branch 'langdale' from 'origin'.
+	Switched to a new branch 'my-langdale'
+	
+	 -- The previous Git checkout command creates a local branch named my-langdale. 
+	    The files available to you in that branch exactly match the repository’s files 
+	    in the langdale release branch.
+	    
+$ git checkout -t origin/dunfell -b my-dunfell	    
+	    
+	    
+$ git pull
+
+     -- Note that you can regularly type the following command in the same directory to keep 
+        your local files in sync with the release branch.
+
+user@ubuntu:~/tv_yocto/poky$ git branch -a
+* langdale
+
+user@ubuntu:~/tv_yocto/poky$ git branch -a
+  langdale
+* my-langdale
+
+ - Yocto Project Quick Build : https://docs.yoctoproject.org/brief-yoctoprojectqs/index.html
+ 
+ - The list of Yocto project Repository Origin : like morty , langdale 
+ - user@ubuntu:~/tv_yocto/poky$ git branch -a
+  langdale
+* my-langdale
+  remotes/origin/1.1_M1
+  remotes/origin/1.1_M2
+  remotes/origin/1.1_M3
+  remotes/origin/1.1_M4
+  remotes/origin/1.2_M1
+  remotes/origin/1.2_M2
+  remotes/origin/1.2_M3
+  remotes/origin/1.2_M4
+  remotes/origin/1.3_M1
+  remotes/origin/1.3_M2
+  remotes/origin/1.3_M3
+  remotes/origin/1.3_M4
+  remotes/origin/1.3_M5
+  remotes/origin/1.3_beta
+  remotes/origin/1.4_M1
+  remotes/origin/1.4_M3
+  remotes/origin/1.4_M4
+  remotes/origin/1.4_M5
+  remotes/origin/1.6_M5
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/bernard
+  remotes/origin/blinky
+  remotes/origin/clyde
+  remotes/origin/daisy
+  remotes/origin/danny
+  remotes/origin/denzil
+  remotes/origin/dizzy
+  remotes/origin/dora
+  remotes/origin/dora-toaster
+  remotes/origin/dunfell
+  remotes/origin/dunfell-next
+  remotes/origin/dylan
+  remotes/origin/edison
+  remotes/origin/elroy
+  remotes/origin/fido
+  remotes/origin/gatesgarth
+  remotes/origin/gatesgarth-next
+  remotes/origin/green
+  remotes/origin/hardknott
+  remotes/origin/hardknott-next
+  remotes/origin/honister
+  remotes/origin/jethro
+  remotes/origin/kirkstone
+  remotes/origin/kirkstone-next
+  remotes/origin/krogoth
+  remotes/origin/langdale
+  remotes/origin/laverne
+  remotes/origin/master
+  remotes/origin/master-next
+  remotes/origin/master-uninative
+  remotes/origin/morty
+  remotes/origin/pinky
+  remotes/origin/purple
+  remotes/origin/pyro
+  remotes/origin/rocko
+  remotes/origin/sumo
+  remotes/origin/sumo-next
+  remotes/origin/thud
+  remotes/origin/thud-next
+  remotes/origin/warrior
+  remotes/origin/warrior-next
+  remotes/origin/zeus
+  remotes/origin/zeus-next
+  
+  Yocto Versions : https://wiki.yoctoproject.org/wiki/Releases
+ 
+ 
+Initiate Build for qemuarm
+==========================
+ $ cd poky
+     -oe-init-build-env
+      - oe   : open embedded
+      - init : init
+      - build
+      - env  : environment 
+ $ source oe-init-build-env /home/($YOUR HOME DIRECTORY)/qemubuild
+  
+   	-	After execution of the above command, current directory will switch to build directory. 
+   	-	Do following changes: 
+  		- /home/($YOUR HOME DIRECTORY)/qemubuild$ vim conf/local.conf
+        - In local.conf file uncomment the following line (commented lines begin with hash "#")
+			- MACHINE ?= "qemuarm"
+			
+	- source oe-init-build-env /home/user/qemubuild	
+    - output :
+		user@ubuntu:~/poky$ source oe-init-build-env /home/user/qemubuild
+		You had no conf/local.conf file. This configuration file has therefore been
+		created for you from /home/user/poky/meta-poky/conf/templates/default/local.conf.sample
+		You may wish to edit it to, for example, select a different MACHINE (target
+		hardware).
+		
+		You had no conf/bblayers.conf file. This configuration file has therefore been
+		created for you from /home/user/poky/meta-poky/conf/templates/default/bblayers.conf.sample
+		To add additional metadata layers into your configuration please add entries
+		to conf/bblayers.conf.
+		
+		The Yocto Project has extensive documentation about OE including a reference
+		manual which can be found at:
+		    https://docs.yoctoproject.org
+		
+		For more information about OpenEmbedded see the website:
+		    https://www.openembedded.org/
+		
+		
+		### Shell environment set up for builds. ###
+		
+		You can now run 'bitbake <target>'
+		
+		Common targets are:
+		    core-image-minimal
+		    core-image-full-cmdline
+		    core-image-sato
+		    core-image-weston
+		    meta-toolchain
+		    meta-ide-support
+		
+		You can also run generated qemu images with a command like 'runqemu qemux86-64'.
+		
+		Other commonly useful commands are:
+		 - 'devtool' and 'recipetool' handle common recipe tasks
+		 - 'bitbake-layers' handles common layer tasks
+		 - 'oe-pkgdata-util' handles common target package tasks
+		user@ubuntu:~/qemubuild$ 
+		
+	 - configuration files:
+		 user@ubuntu:~/qemubuild/conf$ ls
+		 bblayers.conf  local.conf  templateconf.cfg
+	 
+
+Trigger build
+===============
+ 
+ /home/($YOUR HOME DIRECTORY)/qemubuild$ bitbake core-image-minimal
+ 
+ 
+
+Test Build
+==========
+ $ runqemu core-image-minimal nographic
+ 
+______________________________________________________________________________________________________________________________ 
+ 
+ YOCTO :
+     - The Yocto Project is an open source collaboration project that helps developers create custom Linux-based systems for embedded products, 
+       regardless of the hardware architecture. 
+     - Historically the project grew from, and works with the OpenEmbedded Project
+       which is where the build system and some of the meta-data are derived.
+     - yocto is a framework with lot of python scripts.
+     - package manager : 
+           - apt is pacakge manager 
+           - look for pacakge from server and extract then install.
+     
+     - ubuntu = kernel +UI(shell + window managers) + init subsystem + Apps + tools + pacakge management.
+     
+     - Yocto project allow users to build custom embedded linux-based system regardless of hardware architecture.
+     - Yocto project like buildroot gives us same end products with flexible package management and SDK
+       - bOOtloader
+       - RootFilesystem
+       - kernel
+       - compatible toolchain
+       - package management system
+       
+      - https://www.yoctoproject.org/
+      - https://git.yoctoproject.org/
+      - git clone -b langdale git://git.yoctoproject.org/poky.git
+      
+      - new to yocto : https://www.yoctoproject.org/software-overview/
+      - Yocto Project Quick Build : https://docs.yoctoproject.org/brief-yoctoprojectqs/index.html
+      
+      - Core Components of Yocto Project
+        - Poky
+        - OpenEmbedded COre
+        - BitBake
+        
+      - Open Embedded Project
+         - open embeddded core
+      - Yocto Project
+          - Poky
+          - bitbake
+          
+       - bitbake : (Build Engine of Yocto) (is stack of python)
+          - files parsed by bitbake
+            - configuration files (*.conf)
+            - classes(*.bbclass)
+            - receipes(*.bb)
+          
+          - other metadata
+            - append files(*.bbappend)
+            - include files(*.inc)
+            
+          - layer : A collection of related recipes.
+            
+        - Poky:
+          - a reference embedded distribution.
+          
+_________________________________________________________________________________________________________________________________________        
+       
+ Poky Source Tree:
+ 
+	 user@ubuntu:~/tv_yocto/poky$ ls -l
+	    bitbake  documentation  LICENSE.GPL-2.0-only  MAINTAINERS.md  MEMORIAM  meta-poky      meta-skeleton   oe-init-build-env   README.md          README.poky.md  scripts
+contrib  LICENSE        LICENSE.MIT           Makefile        meta      meta-selftest  meta-yocto-bsp  README.hardware.md  README.OE-Core.md  README.qemu.md
+	    
+	    documentation  
+	    bitbake   : holds all scripts used by bit-bake.
+	    
+	    oe:
+	    	meta  :contains open embedded-core metadata.	
+	    
+	    poky : adding additional recipes.    
+	    	meta-poky :  Holds configuration for poky reference distribution.      
+			meta-yocto-bsp  : contains refernce hardware board support package
+		
+		meta-skeleton   : contains template recipes for BSP and kernel development.
+		
+		oe-init-build-env : Script to setup the OpenEmbedded build environment. it will create the build directory.
+		
+	- every layer starts with name meta-
+	  - layer means collection of recipes
+	  
+    - know how to add own layer and how to add recipes?
+ ___________________________________________________________________________________________________________________________________________________________________
+ 
+ oe-init-build-env
+    
+     - source oe-init-build-env /home/user/tv_yocto/test_build
+ 
+     - user@ubuntu:~/tv_yocto/test_build$ tree
+			.
+			└── conf
+			    ├── bblayers.conf
+			    ├── local.conf
+			    └── templateconf.cfg
+	 -conf/local.conf	    
+		 - Machine Selection:
+		    - MACHINE ?=qemuarm
+		       - for this machine have to generate bootloader, toolchain, rootfilesystem
+		       - in carrier MACHINE ?= "am335x-alc"
+		       
+		    - #DL_DIR ?= "${TOPDIR}/downloads"
+		       - in carrier : DL_DIR = "/home/user/Perforce/vodela_ubuntu_4861/ng5/yocto/kernel-4-9/release-2-2/downloads"
+		       
+		    - DISTRO ?= "poky"
+		      - in carrier : DISTRO   = "arago"
+		      
+		    - # Where to place the build output
+					#
+					# This option specifies where the bulk of the building work should be done and
+					# where BitBake should place its temporary files and output. Keep in mind that
+					# this includes the extraction and compilation of many applications and the toolchain
+					# which can use Gigabytes of hard disk space.
+					#
+					# The default is a tmp directory under TOPDIR.
+					#
+					#TMPDIR = "${TOPDIR}/tmp"
+		      
+		      
+     - Special Note: none of commands in yocto are done through sudo.
+     
+
+   
+	    
+_____________________________________________________________________________________________________________________________________	    
+ 
+ 
+          Developer-Specific Layer
+                |
+          commercial layer
+                |
+           UI-specifc 
+ 				|
+ 	     Hardware Specific
+ 				|    
+		 poky layer
+  			    |
+		 oe-core layer
+ 
+_______________________________________________________________________________________________________________________________________
+
+      - bitbake core-image-minimal
+      
+      Error Observed : 
+       user@ubuntu:~/tv_yocto/qemu_build$ bitbake core-image-minimal
+				    ERROR:  OE-core's config sanity checker detected a potential misconfiguration.
+				    Either fix the cause of this error or at your own risk disable the checker (see sanity.conf).
+				    Following is the list of potential problems / advisories:
+				
+				
+				
+				   Fetcher failure for URL: 'https://yoctoproject.org/connectivity.html'. URL https://yoctoproject.org/connectivity.html doesn't work.
+				    Please ensure your host's network is configured correctly.
+				    Please ensure CONNECTIVITY_CHECK_URIS is correct and specified URIs are available.
+				    If your ISP or network is blocking the above URL,
+				    try with another domain name, for example by setting:
+				    CONNECTIVITY_CHECK_URIS = "https://www.example.com/"    You could also set BB_NO_NETWORK = "1" to disable network
+				    access if all required sources are on local disk.
+				    
+				    Summary: There was 1 ERROR message, returning a non-zero exit code.
+				    
+      Solution :
+       
+       - addded below line conf/local.conf , removed webaddress
+            - CONNECTIVITY_CHECK_URIS ?= ""
+ 
+    - IMages are generated :
+		user@ubuntu:~/qemubuild/tmp/deploy/images/qemuarm$ tree
+		.
+		├── core-image-minimal-qemuarm-20221129155738.qemuboot.conf
+		├── core-image-minimal-qemuarm-20221129155738.rootfs.ext4
+		├── core-image-minimal-qemuarm-20221129155738.rootfs.manifest
+		├── core-image-minimal-qemuarm-20221129155738.rootfs.tar.bz2
+		├── core-image-minimal-qemuarm-20221129155738.testdata.json
+		├── core-image-minimal-qemuarm.ext4 -> core-image-minimal-qemuarm-20221129155738.rootfs.ext4
+		├── core-image-minimal-qemuarm.manifest -> core-image-minimal-qemuarm-20221129155738.rootfs.manifest
+		├── core-image-minimal-qemuarm.qemuboot.conf -> core-image-minimal-qemuarm-20221129155738.qemuboot.conf
+		├── core-image-minimal-qemuarm.tar.bz2 -> core-image-minimal-qemuarm-20221129155738.rootfs.tar.bz2
+		├── core-image-minimal-qemuarm.testdata.json -> core-image-minimal-qemuarm-20221129155738.testdata.json
+		├── modules--5.4.219+gitAUTOINC+7e9781b04d_88065fdc7d-r0-qemuarm-20221129155738.tgz
+		├── modules-qemuarm.tgz -> modules--5.4.219+gitAUTOINC+7e9781b04d_88065fdc7d-r0-qemuarm-20221129155738.tgz
+		├── zImage -> zImage--5.4.219+gitAUTOINC+7e9781b04d_88065fdc7d-r0-qemuarm-20221129155738.bin
+		├── zImage--5.4.219+gitAUTOINC+7e9781b04d_88065fdc7d-r0-qemuarm-20221129155738.bin
+		└── zImage-qemuarm.bin -> zImage--5.4.219+gitAUTOINC+7e9781b04d_88065fdc7d-r0-qemuarm-20221129155738.bin
+ __________________________________________________________________________________________________________________________________________________
+ 
+      $ runqemu core-image-minimal nographic
+      
+      user@ubuntu:~/tv_yocto/qemubuild$ runqemu core-image-minimal nographic
+					runqemu - INFO - Running bitbake -e ...
+					runqemu - INFO - Continuing with the following parameters:
+					KERNEL: [/home/user/tv_yocto/qemubuild/tmp/deploy/images/qemuarm/zImage--5.4.219+gitAUTOINC+7e9781b04d_88065fdc7d-r0-qemuarm-20221129155738.bin]
+					MACHINE: [qemuarm]
+					FSTYPE: [ext4]
+					ROOTFS: [/home/user/tv_yocto/qemubuild/tmp/deploy/images/qemuarm/core-image-minimal-qemuarm.ext4]
+					CONFFILE: [/home/user/tv_yocto/qemubuild/tmp/deploy/images/qemuarm/core-image-minimal-qemuarm.qemuboot.conf]
+					
+					runqemu - INFO - Setting up tap interface under sudo
+					runqemu - ERROR - Setting up tap device failed:
+					Command '('sudo', '/home/user/tv_yocto/poky/scripts/runqemu-ifup', '1000', '1000', '/home/user/tv_yocto/qemubuild/tmp/work/x86_64-linux/qemu-helper-native/1.0-r1/recipe-sysroot-native/usr/bin')' returned non-zero exit status 1.
+					Run runqemu-gen-tapdevs to manually create one.
+					runqemu - INFO - Cleaning up
+					
+	 user@ubuntu:~/tv_yocto/qemubuild$ runqemu-gen-tapdevs
+					Error: Incorrect number of arguments
+					Usage: sudo /home/user/tv_yocto/poky/scripts/runqemu-gen-tapdevs <uid> <gid> <num> <staging_bindir_native>
+					Where <uid> is the numeric user id the tap devices will be owned by
+					Where <gid> is the numeric group id the tap devices will be owned by
+					<num> is the number of tap devices to create (0 to remove all)
+					<native-sysroot-basedir> is the path to the build system's native sysroot
+					For example:
+					$ bitbake qemu-helper-native
+					$ sudo /home/user/tv_yocto/poky/scripts/runqemu-gen-tapdevs 1000 1000 4 tmp/sysroots-components/x86_64/qemu-helper-native/usr/bin
+					
+	 Solution :
+			 # Make sure we have the required utilities
+			 $ bitbake qemu-helper-native
+			 
+	booting-qemu-image :		 
+			 https://pelux.io/software-factory/master/swf-blueprint/docs/articles/baseplatform/booting-qemu-image.html
+______________________________________________________________________________________________________________________________________________________
+
+	- bblayer.conf
+
+		- layers are defined in bblayer.conf
+		- user@ubuntu:~/tv_yocto/build-qemuarm/conf$ cat bblayers.conf 
+				# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+				# changes incompatibly
+				POKY_BBLAYERS_CONF_VERSION = "2"
+				
+				BBPATH = "${TOPDIR}"
+				BBFILES ?= ""
+				
+				BBLAYERS ?= " \
+				  /home/user/tv_yocto/poky/meta \                   --> oe-core
+				  /home/user/tv_yocto/poky/meta-poky \              --> poky layer extended
+				  /home/user/tv_yocto/poky/meta-yocto-bsp \         --> poky layer extended
+				  "
+__________________________________________________________________________________________________________________________________________________________	 
+		
+	- for qemu arm, which bootloader should build, which kernel should build be defined in receipes
+		- user@ubuntu:~/tv_yocto/poky/meta/conf/machine$ ls
+			include  qemuarm64.conf  qemuarm.conf  qemuarmv5.conf  qemumips64.conf  qemumips.conf  qemuppc.conf  qemuriscv64.conf  qemux86-64.conf  qemux86.conf
+		
+	- user@ubuntu:~/tv_yocto/poky/meta-yocto-bsp/conf/machine$ ls
+		beaglebone-yocto.conf  edgerouter.conf  genericx86-64.conf  genericx86.conf  include
+		
+	- How can i add addition hardware support layers, vendor specific layers?
+	  - YOCTO PROJECT® COMPATIBLE LAYERS
+	     - https://www.yoctoproject.org/software-overview/layers/
+	     
+	 - open embedded layers
+	    - https://layers.openembedded.org/layerindex/branch/master/layers/
+	      - meta-ti 	: 	git://git.yoctoproject.org/meta-ti                	: Texas Instruments board support (official)
+	      - meta-arago 	:	git://arago-project.org/git/meta-arago.git 			: Arago/TI-SDK distribution	
+	      - meta-linaro : 	https://git.linaro.org/openembedded/meta-linaro.git    : 	Linaro layer for openembedded
+	 
+	 - cd poky
+	   - clone layers to poky directory.
+	   - these additional layers should be listed in bblayer.conf
+	
+___________________________________________________________________________________________________________________________________________________________________
+
+  - other different bitbake commands :
+       user@ubuntu:~/tv_yocto/poky/bitbake/bin$ tree
+			.
+			├── bitbake
+			├── bitbake-diffsigs
+			├── bitbake-dumpsig -> bitbake-diffsigs
+			├── bitbake-getvar
+			├── bitbake-hashclient
+			├── bitbake-hashserv
+			├── bitbake-layers
+			├── bitbake-prserv
+			├── bitbake-selftest
+			├── bitbake-worker
+			├── bitdoc
+			├── git-make-shallow
+			├── toaster
+			└── toaster-eventreplay
+			
+			
+			
+		- bitbake-layers   -> is a command
+		  - user@ubuntu:~/tv_yocto/build-qemuarm$ bitbake-layers -h
+					NOTE: Starting bitbake server...
+					usage: bitbake-layers [-d] [-q] [-F] [--color COLOR] [-h] <subcommand> ...
+					
+					BitBake layers utility
+					
+					optional arguments:
+					  -d, --debug           Enable debug output
+					  -q, --quiet           Print only errors
+					  -F, --force           Force add without recipe parse verification
+					  --color COLOR         Colorize output (where COLOR is auto, always, never)
+					  -h, --help            show this help message and exit
+					
+					subcommands:
+					  <subcommand>
+					    show-layers         show current configured layers.
+					    show-overlayed      list overlayed recipes (where the same recipe exists
+					                        in another layer)
+					    show-recipes        list available recipes, showing the layer they are
+					                        provided by
+					    show-appends        list bbappend files and recipe files they apply to
+					    show-cross-depends  Show dependencies between recipes that cross layer
+					                        boundaries.
+					    add-layer           Add one or more layers to bblayers.conf.
+					    remove-layer        Remove one or more layers from bblayers.conf.
+					    flatten             flatten layer configuration into a separate output
+					                        directory.
+					    layerindex-fetch    Fetches a layer from a layer index along with its
+					                        dependent layers, and adds them to conf/bblayers.conf.
+					    layerindex-show-depends
+					                        Find layer dependencies from layer index.
+					    create-layer        Create a basic layer
+					
+					Use bitbake-layers <subcommand> --help to get help on a specific command
+		  
+		  - bitbake-layers show-layers
+		  	user@ubuntu:~/tv_yocto/build-qemuarm$ bitbake-layers show-layers
+				NOTE: Starting bitbake server...
+				layer                 path                                      priority
+				==========================================================================
+				meta                  /home/user/tv_yocto/poky/meta             5
+				meta-poky             /home/user/tv_yocto/poky/meta-poky        5
+				meta-yocto-bsp        /home/user/tv_yocto/poky/meta-yocto-bsp   5
+		  
+		  
+		  - use bitbake-layers add-layer <path of layer>     -> this will listed in bblayer.conf
+		  
+__________________________________________________________________________________________________________________________ 
+		
+
+Classes :
+
+  - Classes provide an abstraction to common code, which can be re-used in multiple recipes.
+  	- Common tasks do not have to be re-developed.
+  -	class extension is .bbclass
+  - inherit <class>
+  - different classes : /home/user/tv_yocto/poky/meta/classes
+  	- base.bbclass
+  	- kernel.bbclass
+  	- autotools.bbclass
+  	- cmake.bbclass
+  	- systemd.bbclass
+ ___________________________________________________________________________________________________________________________ 	 
+  	 
+  - devtool is tool;
+  
+		user@ubuntu:~/tv_yocto/build-qemuarm$ devtool
+			NOTE: Starting bitbake server...
+			devtool: error: the following arguments are required: <subcommand>
+			usage: devtool [--basepath BASEPATH] [--bbpath BBPATH] [-d] [-q]
+			               [--color COLOR] [-h]
+			               <subcommand> ...
+			
+			OpenEmbedded development tool
+			
+			options:
+			  --basepath BASEPATH   Base directory of SDK / build directory
+			  --bbpath BBPATH       Explicitly specify the BBPATH, rather than getting it
+			                        from the metadata
+			  -d, --debug           Enable debug output
+			  -q, --quiet           Print only errors
+			  --color COLOR         Colorize output (where COLOR is auto, always, never)
+			  -h, --help            show this help message and exit
+			
+			subcommands:
+			  Beginning work on a recipe:
+			    add                   Add a new recipe
+			    modify                Modify the source for an existing recipe
+			    upgrade               Upgrade an existing recipe
+			  Getting information:
+			    status                Show workspace status
+			    search                Search available recipes
+			    latest-version        Report the latest version of an existing recipe
+			    check-upgrade-status  Report upgradability for multiple (or all) recipes
+			  Working on a recipe in the workspace:
+			    build                 Build a recipe
+			    rename                Rename a recipe file in the workspace
+			    edit-recipe           Edit a recipe file
+			    find-recipe           Find a recipe file
+			    configure-help        Get help on configure script options
+			    update-recipe         Apply changes from external source tree to recipe
+			    reset                 Remove a recipe from your workspace
+			    finish                Finish working on a recipe in your workspace
+			  Testing changes on target:
+			    deploy-target         Deploy recipe output files to live target machine
+			    undeploy-target       Undeploy recipe output files in live target machine
+			    build-image           Build image including workspace recipe packages
+			  Advanced:
+			    create-workspace      Set up workspace in an alternative location
+			    import                Import exported tar archive into workspace
+			    extract               Extract the source for an existing recipe
+			    sync                  Synchronize the source tree for an existing recipe
+			    menuconfig            Alter build-time configuration for a recipe
+			    export                Export workspace into a tar archive
+			Use devtool <subcommand> --help to get help on a specific command
+  
+_---------------------------------------------------------------------------------------------------------------------------------------
+
+
+    
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+			
+	 
+      

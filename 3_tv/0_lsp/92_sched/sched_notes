@@ -1,0 +1,99 @@
+Scheduling :
+
+-	man sched
+
+-	Since Linux 2.6.23, the default scheduler is CFS, the "Completely Fair Scheduler".
+
+-	The  scheduler  is  the  kernel component that decides which runnable thread will be executed by the CPU next.
+
+-	Each thread has
+	-	scheduling policy
+		-	Normal Scheduling Policies (SCHED_OTHER, SCHED_IDLE, SCHED_BATCH)
+		-	Real-Time Scheduling Policies' (SCHED_FIFO, SCHED_RR)	
+	-	scheduling priority
+	
+- Normal Scheduling Policies (SCHED_OTHER, SCHED_IDLE, SCHED_BATCH) :
+
+	-	For threads scheduled under one of the 'normal scheduling policies' (SCHED_OTHER, SCHED_IDLE, SCHED_BATCH) : 
+		-	sched_priority is not used in scheduling decisions (it must be specified as 0).
+		-	for SCHED_OTHER niceness values are used instead of priority number.\
+		
+- Real-Time Scheduling Policies' (SCHED_FIFO, SCHED_RR) :
+	
+	-	Processes scheduled under one of the 'real-time policies' (SCHED_FIFO, SCHED_RR) 
+		-	have a sched_priority value in the range 1 (low) to 99 (high).
+		-	real-time  threads  always have higher priority than normal threads.
+		
+- All  scheduling is preemptive:
+	-	if a thread with a higher static priority becomes ready to run, the currently running thread will be preempted and 
+	    returned to the wait list for its static priority level.  
+	    
+	-	The 'scheduling policy' determines the ordering only within the list of runnable threads with equal static priority.
+____________________________________________________________________________________________________________________________________________________________
+
+- SCHED_FIFO: First in-first out scheduling :
+
+	-	when a SCHED_FIFO threads  becomes  runnable,  it  will  always  immediately  preempt  any  currently  running
+        SCHED_OTHER, SCHED_BATCH, or SCHED_IDLE thread.
+        
+    -	SCHED_FIFO is a simple scheduling algorithm without time slicing.	
+    
+    -	A  running  SCHED_FIFO thread that has been preempted by another thread of higher priority will stay at the head of 
+    	the list for its priority and will resume execution as soon as all threads of higher priority are blocked again.
+    	
+    -	4) A thread calling sched_yield(2) will be put at the end of the list.
+    
+    -	A SCHED_FIFO thread runs until either it is blocked by an I/O request, it is preempted by a higher priority thread, or it calls sched_yield(2).
+    
+________________________________________________________________________________________________________________________________________________________ 
+ 
+- SCHED_RR: Round-robin scheduling : 
+
+	-	SCHED_RR is a simple enhancement of SCHED_FIFO.  
+	
+	-	Everything described above for SCHED_FIFO also applies to SCHED_RR, except that each thread is allowed to run only for a maximum  time  quantum.
+	
+	-	If  a  SCHED_RR thread has been running for a time period equal to or longer than the time quantum, it will be put at the end of the list for its priority.  
+___________________________________________________________________________________________________________________________________________________________________
+
+- SCHED_OTHER: Default Linux time-sharing scheduling :
+
+	 -	SCHED_OTHER can be used at only static priority 0 (i.e., threads under real-time policies always have priority over SCHED_OTHER processes).   
+	 
+	 -	SCHED_OTHER  is  the  standard  Linux  time-sharing scheduler that is intended for all threads that do not require the special real-time mechanisms.
+	 
+	 -	The nice value :
+	 	-	 On modern Linux, the range is -20 (high priority) to +19 (low priority).
+	 	
+_____________________________________________________________________________________________________________________________________________________________________
+
+Discuss with Pratik : 
+	-	how SCHED_FIFO real timethreads working considering sched_rt_period_us,sched_rt_runtime_us?
+	-	how non-real time threads are working considering sched_rt_period_us,sched_rt_runtime_us?
+	-	how to identify non real time threads in fwex?
+	-	if sched_fifo real time thread is blocked with high priority, giving no chance to other threads for excution? 
+		how it is killed with non- real time thread in fwex?
+
+   Limiting the CPU usage of real-time and deadline processes
+       A nonblocking infinite loop in a thread scheduled under the SCHED_FIFO, SCHED_RR, or SCHED_DEADLINE policy can potentially block all other threads from accessing  the  CPU  forever.   Prior  to
+       Linux 2.6.25, the only way of preventing a runaway real-time process from freezing the system was to run (at the console) a shell scheduled under a higher static priority than the tested appli‐
+       cation.  This allows an emergency kill of tested real-time applications that do not block or terminate as expected.
+
+       Since Linux 2.6.25, there are other techniques for dealing with runaway real-time and deadline processes.  One of these is to use the RLIMIT_RTTIME resource limit to set a ceiling  on  the  CPU
+       time that a real-time process may consume.  See getrlimit(2) for details.
+
+       Since  version  2.6.25,  Linux  also provides two /proc files that can be used to reserve a certain amount of CPU time to be used by non-real-time processes.  Reserving CPU time in this fashion
+       allows some CPU time to be allocated to (say) a root shell that can be used to kill a runaway process.  Both of these files specify time values in microseconds:
+
+       /proc/sys/kernel/sched_rt_period_us
+              This file specifies a scheduling period that is equivalent to 100% CPU bandwidth.  The value in this file can range from 1 to INT_MAX, giving an  operating  range  of  1  microsecond  to
+              around 35 minutes.  The default value in this file is 1,000,000 (1 second).
+
+       /proc/sys/kernel/sched_rt_runtime_us
+              The  value  in this file specifies how much of the "period" time can be used by all real-time and deadline scheduled processes on the system.  The value in this file can range from -1 to
+              INT_MAX-1.  Specifying -1 makes the runtime the same as the period; that is, no CPU time is set aside for non-real-time processes (which was the Linux  behavior  before  kernel  2.6.25).
+              The default value in this file is 950,000 (0.95 seconds), meaning that 5% of the CPU time is reserved for processes that don't run under a real-time or deadline scheduling policy.
+	
+_________________________________________________________________________________________________________________________________________________________________________________
+
+

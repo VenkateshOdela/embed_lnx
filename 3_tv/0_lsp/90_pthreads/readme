@@ -1,0 +1,110 @@
+--To see list of running threads in application :
+  - htop
+  - press t for tree mode to see list of threads
+  - F2 setup : ( -> Display Options )
+     -> Show custom thread names.
+     -> Display threads in different color.
+     -> Higlight Program "base name"
+  - F10 done;;
+______________________________________________________
+  
+POSIX Threads :
+
+--Need for Multi-Threading.. ?
+
+--what do we expect from Multi-Threading Library..?
+
+1.Thread Creation and Management calls to be present in library.
+
+2. Thread Syncronization Calls
+  --global data is available to all created threads from a process
+  --syncroniation means not critical section.
+  --syncronization means how do you establish collabration between bumch of threads and 
+     carry out a common goal by splitting job across threads. 
+
+   --pre -emption is result of syncronization.
+   -- pre-emption occur when
+      - interupts can pre-empt
+      -  scheduler can 
+      -  voluntary - wait()
+      -  io
+
+    - syncronization is grouping of bunch of threads , and dividing jobs among them to acheive one common task, 
+
+   ex : pthread_cond_wait()
+
+3. Shared data synchronization
+       ex :pthread_mutex_t
+
+4. Periodic Execution Calls(Timers)
+
+5. Hardware access calls
+
+__________________________________________________________________
+
+
+--threads share the :
+  1.same global memory (data and heap segments),
+  2.but each thread has its own stack (automatic variables).
+
+--For a thread :
+  1. thread ID (the pthread_t data type)
+  2. real-time scheduling policy and priority (sched(7))
+
+--Thread IDs
+  1. Each of the threads in a process has a unique thread identifier (stored in the type pthread_t).  
+  2. This identifier is returned  to  the caller of pthread_create(3), and 
+  3. a thread can obtain its own thread identifier using pthread_self(3).
+___________________________________________________________________________________________________
+--function naming convention :
+
+	-libname_datastructure_operation()
+
+	ex :
+	pthread_mutex_lock()
+	pthread_cond_wait()
+	pthread_create()  -function with 2 names always operate on thread object;
+
+--pthread_extensions
+
+	libname_datastructure_operation_np()
+
+	np : nonposix , nonportable
+_____________________________________________________________________________________________________
+
+$ man pthread_attr_init
+
+           Thread attributes:
+                   Detach state        = PTHREAD_CREATE_JOINABLE
+                   Scope               = PTHREAD_SCOPE_SYSTEM
+
+                   Inherit scheduler   = PTHREAD_INHERIT_SCHED
+                   Scheduling policy   = SCHED_OTHER
+                   Scheduling priority = 0
+
+                   Guard size          = 4096 bytes
+                   Stack address       = 0x40196000
+                   Stack size          = 0x201000 bytes
+
+-- stack for a thread:
+   - user level thread,
+   - unlimited stack,
+   - size of adress space for stack
+   - maximum address space of stack for each thread 8MB.
+   - default stack size for thread is 2MB.
+   - minimum stack size of thread 16KB
+   - Stack Size range for thread is 16KB - 8MB.
+   - Guard Size : two threads , one thread-16KB , other thread -16KB
+     TOTAL 32KB, 32KB is fetched from malloc , starting address recevied from malloc is assigned and size = 16KB, after this assignment 
+done , other 16 KB is assigned.
+      -- 32KB
+          16KB
+           |
+          16KB
+        Assume Stack grows downwards, overlap of it is more than 16KB.
+        Guard allows to avoid corruption if used memory behind the stack.
+	minimum gaurd size = 4 KB = 4096	
+
+
+
+

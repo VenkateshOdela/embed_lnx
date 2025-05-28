@@ -1,0 +1,8 @@
+
+What is the difference between malloc and new in C++?
+
+
+		malloc()                                             new()
+	malloc() only allocates memory.			the new operator allocates memory and constructs an object
+
+                                             Additionally, new can also call the constructor of the object, while malloc() cannot.

@@ -1,0 +1,33 @@
+
+Wild Pointer : using un-initialized pointer;(is memory violation);
+ 
+     --Uninitialized pointers are known as wild pointers because they point to some arbitrary memory   
+       location and may cause a program to crash or behave badly.
+
+	int main()
+	{
+	  int *p;  /* wild pointer */
+	   /* Some unknown memory location is being corrupted. 
+	   This should never be done. */ 
+	  *p = 12; 
+	}
+
+Dangling Pointer : a pointer pointing to memory location that has been already deleted(or freed);
+
+	// Deallocating a memory pointed by ptr causes
+	// dangling pointer
+	#include <stdlib.h>
+	#include <stdio.h>
+ 
+	int main()
+	{
+	    int *ptr = (int *)malloc(sizeof(int));
+	 
+	    // After below free call, ptr becomes a
+	    // dangling pointer
+	    free(ptr);
+	     
+	    // No more a dangling pointer
+	    ptr = NULL;
+	}
+

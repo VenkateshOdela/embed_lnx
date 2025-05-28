@@ -1,0 +1,135 @@
+
+
+-	Memory-mapped I/O (MMIO) and 
+-	Port-mapped I/O (PMIO)
+
+- sudo cat /proc/ioports
+- sudo cat /proc/iomem
+
+
+-	CPU  <-->  IO Devices
+
+-	Microprocessors normally use two methods to connect external devices: 
+	-	memory mapped or 
+	-	port mapped I/O.
+	
+Memory mapped I/O is mapped into the same address space as program memory and/or user memory, and is accessed in the same way.
+
+Port mapped I/O uses a separate, dedicated address space and is accessed via a dedicated set of microprocessor instructions.
+	
+-	Memory-mapped I/O (MMIO) 	
+	-	Memory-mapped I/O uses the same address space to address both main memory and I/O devices. 
+	
+	-   The memory and registers of the I/O devices are mapped to (associated with) address values. 
+	
+	-   So a memory address may refer to either a portion of physical RAM, or instead to memory and registers of the I/O device. 
+	
+	-   Thus, the CPU instructions used to access the memory can also be used for accessing devices. 
+	
+	-   Each I/O device monitors the CPU's address bus and responds to any CPU access of an address assigned to that device, 
+	    connecting the data bus to the desired device's hardware register. To accommodate the I/O devices, 
+	    some areas of the address bus used by the CPU must be reserved for I/O and must not be available for normal physical memory. 
+	    The reservation may be permanent, or temporary (as achieved via bank switching). An example of the latter is found in the Commodore 64,
+	    which uses a form of memory mapping to cause RAM or I/O hardware to appear in the 0xD000-0xDFFF range.
+
+-	Port-mapped I/O (PMIO)
+	-	Port-mapped I/O often uses a special class of CPU instructions designed specifically for performing I/O, 
+		such as the in and out instructions found on microprocessors based on the x86 and x86-64 architectures. 
+		Different forms of these two instructions can copy one, two or four bytes (outb, outw and outl, respectively) between the EAX register 
+		or one of that register's subdivisions on the CPU and a specified I/O port which is assigned to an I/O device. I/O devices have a 
+		separate address space from general memory, either accomplished by an extra "I/O" pin on the CPU's physical interface, or an entire 
+		bus dedicated to I/O. Because the address space for I/O is isolated from that for main memory, this is sometimes referred to as isolated I/O.[1]
+
+-	   Memory Mapped I/O						Port Mapped I/0
+
+
+		Memory-mapped IO												Port-mapped IO
+	Same address bus to address memory and I/O devices				Different address spaces for memory and I/O devices
+	
+	Access to the I/O devices using regular instructions			Uses a special class of CPU instructions to access I/O devices
+	
+	Most widely used I/O method										x86 Intel microprocessors - IN and OUT instructions
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  CPU - Chipselect
+        latch
+          |
+          |
+          |
+          |
+          
+          
+          
+  -      Application
+      
+      --------|-----------------------
+        
+        Kernel Abstraction
+              |
+            Driver
+            
+      ---------------------------------
+              |
+            Device
+            
+            
+  - sudo lsusb
+  - sudo lspci
+  
+  - various supported i2c controller adapters :
+  - user@ubuntu:~/embedded_linux/linux-5.19.5/drivers/i2c/busses$ ls
+		i2c-acorn.c         i2c-au1550.c             i2c-designware-baytrail.c  i2c-highlander.c  i2c-kempld.c         i2c-octeon-core.c      i2c-pxa.c             i2c-sis630.c           i2c-uniphier-f.c
+		i2c-ali1535.c       i2c-axxia.c              i2c-designware-common.c    i2c-hisi.c        i2c-lpc2k.c          i2c-octeon-core.h      i2c-pxa-pci.c         i2c-sis96x.c           i2c-versatile.c
+		i2c-ali1563.c       i2c-bcm2835.c            i2c-designware-core.h      i2c-hix5hd2.c     i2c-meson.c          i2c-octeon-platdrv.c   i2c-qcom-cci.c        i2c-sprd.c             i2c-via.c
+		i2c-ali15x3.c       i2c-bcm-iproc.c          i2c-designware-master.c    i2c-hydra.c       i2c-mlxbf.c          i2c-omap.c             i2c-qcom-geni.c       i2c-st.c               i2c-viapro.c
+		i2c-altera.c        i2c-bcm-kona.c           i2c-designware-pcidrv.c    i2c-i801.c        i2c-mlxcpld.c        i2c-opal.c             i2c-qup.c             i2c-stm32.c            i2c-viperboard.c
+		i2c-amd756.c        i2c-brcmstb.c            i2c-designware-platdrv.c   i2c-ibm_iic.c     i2c-mpc.c            i2c-owl.c              i2c-rcar.c            i2c-stm32f4.c          i2c-virtio.c
+		i2c-amd756-s4882.c  i2c-cadence.c            i2c-designware-slave.c     i2c-ibm_iic.h     i2c-mt65xx.c         i2c-parport.c          i2c-riic.c            i2c-stm32f7.c          i2c-wmt.c
+		i2c-amd8111.c       i2c-cbus-gpio.c          i2c-digicolor.c            i2c-icy.c         i2c-mt7621.c         i2c-pasemi-core.c      i2c-rk3x.c            i2c-stm32.h            i2c-xgene-slimpro.c
+		i2c-amd-mp2.h       i2c-ccgx-ucsi.c          i2c-diolan-u2c.c           i2c-img-scb.c     i2c-mv64xxx.c        i2c-pasemi-core.h      i2c-robotfuzz-osif.c  i2c-sun6i-p2wi.c       i2c-xiic.c
+		i2c-amd-mp2-pci.c   i2c-ccgx-ucsi.h          i2c-dln2.c                 i2c-imx.c         i2c-mxs.c            i2c-pasemi-pci.c       i2c-s3c2410.c         i2c-synquacer.c        i2c-xlp9xx.c
+		i2c-amd-mp2-plat.c  i2c-cht-wc.c             i2c-eg20t.c                i2c-imx-lpi2c.c   i2c-nforce2.c        i2c-pasemi-platform.c  i2c-scmi.c            i2c-taos-evm.c         Kconfig
+		i2c-aspeed.c        i2c-cp2615.c             i2c-elektor.c              i2c-iop3xx.c      i2c-nforce2-s4985.c  i2c-pca-isa.c          i2c-sh7760.c          i2c-tegra-bpmp.c       Makefile
+		i2c-at91-core.c     i2c-cpm.c                i2c-emev2.c                i2c-iop3xx.h      i2c-nomadik.c        i2c-pca-platform.c     i2c-sh_mobile.c       i2c-tegra.c            scx200_acb.c
+		i2c-at91.h          i2c-cros-ec-tunnel.c     i2c-exynos5.c              i2c-isch.c        i2c-npcm7xx.c        i2c-piix4.c            i2c-sibyte.c          i2c-thunderx-pcidrv.c
+		i2c-at91-master.c   i2c-davinci.c            i2c-fsi.c                  i2c-ismt.c        i2c-nvidia-gpu.c     i2c-pnx.c              i2c-simtec.c          i2c-tiny-usb.c
+		i2c-at91-slave.c    i2c-designware-amdpsp.c  i2c-gpio.c                 i2c-jz4780.c      i2c-ocores.c         i2c-powermac.c         i2c-sis5595.c         i2c-uniphier.c
+
+  
+              

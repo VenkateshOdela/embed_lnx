@@ -1,0 +1,139 @@
+
+          /____________________ GIT Commands____________________/
+___________________________________________________________________________
+Create a folder embd_linux
+$ mkdir embd_linux
+$ cd embd_linux
+
+Then do in same directory :
+$ git init 
+____________________________________________________________________________
+
+1. git init
+  git init Transform the current directory into a Git repository
+
+1. git init <directory>
+   Transform a directory in the current path into a Git repository
+
+user@ubuntu:~/git_embd_linux/embd_linux$ ls -a
+.  ..  books  c  DS  .git  git_lab_cmnds  README.md
+_____________________________________________________________________________
+Setting Global Git Username and Email to your commits and tags
+
+$ git config --global user.name “Your Name”
+$ git config --global user.email “you@example.com”
+
+  git config --global user.name “venkateshodela14”
+  git config --global user.email "venkateshodela14@gitlab.com"
+_______________________________________________________________________________
+Verify that the changes were made correctly:
+1. git config --list
+
+user@ubuntu:~/git_embd_linux/embd_linux$ git config --list
+user.name=“venkateshodela14”
+user.email=venkateshodela14@gitlab.com
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+remote.origin.url=https://gitlab.com/venkateshodela14/embd_linux.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+_____________________________________________________________________________
+$ git config --global color.ui auto
+Enable some colorization of Git output
+_____________________________________________________________________________
+
+
+______________________________________________________________________________
+To get data from repository first time :
+
+1.git clone <url> : fetch all data from gitlab repository.
+  git clone https://gitlab.com/venkateshodela14/embd_linux.git
+______________________________________________________________________________ 
+
+user@ubuntu:~/git_embd_linux/embd_linux$ git push
+Username for 'https://gitlab.com': venkateshodela14
+Password for 'https://venkateshodela14@gitlab.com': 
+Everything up-to-date
+
+_______________________________________________________________________________
+1. To Make it New fileavaliable in repository : add ,ammit push 
+	git add git_lab_cmnds
+	git commit -a
+	git push
+2. if it is already added
+	git commit -a
+	git push 
+Note : Before committing mush use $git add
+_______________________________________________________________________________
+user@ubuntu:~/git_embd_linux/embd_linux$ git push
+Username for 'https://gitlab.com': venkateshodela14
+Password for 'https://venkateshodela14@gitlab.com': 
+Everything up-to-date
+_______________________________________________________________________________
+
+1.$git status
+Displays the status of your working directory. Options include new,
+staged, and modified files. It will retrieve branch name, current commit
+identifier, and changes pending commit.
+
+	user@ubuntu:~/git_embd_linux/embd_linux$ git status
+	On branch main
+	Your branch is up to date with 'origin/main'.
+
+	nothing to commit, working tree clean
+
+        1.$ git status
+	2.Untracked files : use git add <file1> <file2> : shown in red colour
+	3.Changes not staged for commit: use git add <file> : shown in red colour
+	4.Changes to be committed : shown in green colour
+_________________________________________________________________________________ 
+2.$git diff
+  Show changes between working directory and staging area.
+  use git diff to see what changes are there in local directory
+  1. Red Color : indicates text removed.
+  2. Green Color : indicates new text added.
+_______________________________________________________________________________
+
+$ git add [file]
+Add a file to the staging area. Use in place of the full file path to add all
+changed files from the current directory down into the directory tree.
+
+______________________________________________________________________________
+$ git commit 
+  Create a new commit from changes added to the staging area.
+  The commit must have a message!
+______________________________________________________________________________
+$ git push
+  upload local files to repository
+________________________________________________________________________________
+$ git pull [remote_ip]
+  Fetch changes from the remote and merge current branch with its
+  upstream.
+_______________________________________________________________________________
+$ git log [-n count]
+  List commit history of current branch. -n count limits list to last n
+  commits.
+  git log -n 20
+$ git log
+  will do the same , it will show list of commits done.
+______________________________________________________________________________
+$ git rm <file_path>
+  using git rm command to remove file from staging area which is added through git add
+$ rm <file_path>
+  use only rm to remove normal files which are not added to staging area.
+
+$ how to unintialize git .git configuration from one specific directory;
+ $ sudo rm -v .git
+
+_____________________________________________________________________________________
+--To Checkout only Specific file from the repository
+$ git checkout <path/filename> 
+____________________________________________________________________________________
+_____________________________________________________________________________________
+$ git checkout <file_name> // remove uncommited changes in file
+$ git reset <file_name> // Unstage the file
+__________________________________________________________
+

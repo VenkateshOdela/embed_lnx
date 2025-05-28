@@ -1,0 +1,186 @@
+Cross Toolchain Components :
+
+ 	- Compiler Tools
+   		- Pre-Processor
+   		- Compiler
+   		
+ 	- Build Tools
+ 	    - Assembler
+ 	    - linker
+ 	    - link loader
+ 	    - objdump
+ 	    - nm
+ 	    - readelf
+ 	    
+ 	    - strip
+ 	- Standarad Library
+ 	    - glibc
+ 	    
+ 	- kernel headers
+ 	    - from source download package(kernel.org repos)
+ 	    
+ 	- Debug Tools
+ 	    - GDB
+ 	    - GPROF
+___________________________________________________________________________________________________________________________ 	    
+ 	    
+ 	    
+Toolchain types :
+ 
+ 1.the machine configuring the tool chain compenents : the config machine
+ 
+ 2. the machine building the toolchain components : the build machine
+ 3. the machine running the toolchain: the host machine
+ 4. the machine the toolchain is generating the code for : target machine
+ 
+	 1.build == host == target ("Native toolchain")
+	 
+	 2.build == host != target ("cross toolchain")
+	 
+	 3.build != host == target ("cross-native toolchain")
+	 
+	 4.build != host != target ("canadian")
+	 
+____________________________________________________________________________________________________________________________
+
+Installing Toolchain? where to get?
+
+Custom Build :
+ - Manual Integration 
+    - of above all tool chain components; 
+    - clfs.org
+ 
+ - Automated Build :
+   - Buildroot
+   - crosstool-ng
+   
+   - Open Embedded
+   - Yocto
+
+Pre-Build :
+ - Target SoC / Board Vendor SPecific
+ - Consortium(Linaro.org)
+ - Third party vendor
+    - Marvel, Timesys
+    
+ - Crosstool packages from linux distributions
+   - apt-get install gcc-arm-linux-gnueabi
+_________________________________________________________________________________________________________________________________
+ 
+we will move forward with build root : 
+
+creating custom build toolchain with buildroot( qemu_arm_versatile_defconfig for virtual machine):
+
+Build root :
+  - buildroot.org
+  - https://buildroot.org/download.html
+  - git clone git://git.buildroot.net/buildroot
+    - make help
+    - make list-defconfigs
+       - it will list out pre-configured soc config files of different soc's ti, sama
+         - at91sam9g20dfc_defconfig            - Build for at91sam9g20dfc
+         - at91sam9g20dfc_defconfig            - Build for at91sam9g20dfc
+         - raspberrypi4_defconfig              - Build for raspberrypi4
+         - qemu_arm_versatile_defconfig        - Build for qemu_arm_versatile --> this is picked up to understand process in virtual machine
+     
+     - make qemu_arm_versatile_defconfig
+         - configuration is written to /home/user/buildroot/.config
+         - .config contains parameters for build system to create tool chain
+         -  here 'qemu_arm_versatile_defconfig' is file with predefined options in .config;
+            - it will avoid inidivdually selecting through menuconfig;  
+         
+     - make menuconfig
+         - you will see graphical view about different configuration options.
+         
+     - make
+        - source packages are downloaded to : ~/buildroot/dl
+        - dl directoty is created ~/buildroot/dl
+        - in dl all source packages are downloaded
+        - then it will build all together
+        
+        - output build images are placed in : (~/buildroot/output)
+           - ~/buildroot/output/host/bin
+           - ~/buildroot/output/images
+        - result build images are stored in output(~/buildroot/output) directory
+        
+        - ~/buildroot/output/images
+          - rootfs.ext2 start-qemu.sh versatile-pd.dtb zImage
+          - ./start-qemu.sh    -> this script run and open a new linux machine with configured qemu parameters
+            - login as : root
+            - uname -a
+            - /proc/cpuinfo
+            - poweroff
+____________________________________________________________________________________________________________________________
+
+Built Independently : (Manually building images)
+ 
+ All binaries of buildroot are present in this path
+  - /home/user/buildroot/output/host/bin
+ 
+ Building kernel :  
+   - mkdir workspace
+   - copy linux sources from /buildroot/dl
+   - /home/user/workspace/linux-5.9
+     -  make ARCH=arm help
+         - selecting versatile_defconfig file
+     -  make ARCH=arm versatile_defconfig
+         - configuration written to .config
+     -  make ARCH=arm CROSS_COMPILE=arm-linux-
+         - build continue and generate images
+ 
+ Building filesystem(rootfs image):
+   - why we need rootfs?
+      - separating binaries into indenpendent memory(kernel_space/user_space)
+      - rootfs is container which stores binaries, and loaded when ever needed;
+      - rootfs is hierarcy of folders.
+      - rootfs can be in RAM , FLASH, and binaries are hold,until they are loaded;
+      - maintaining configurations, libraries, binaries,
+       	- /etc  configuration files
+       	- bin - commands are stored here like ls, ping, mount
+       	- sbin - binaries with administrative previleages.
+       	- lib for libraries
+      - these rootfs directories are made standard, as usr application is always try to look common path.
+      - initramfs : is also a volume created with standard directory.
+      - initrd : 
+    - /home/user/workspace/
+       - mkdir -pv qemurfs/{bin,sbin,root,etc/init.d,proc,dev,sys,usr/{bin,sbin}}
+       - cd qemurfs
+          - tree
+    - BusyBox
+      - which stores frequently used binaries collectively, either independently choosing.
+      - cp busybox from /buildroot/dl
+      - tar xvf busybox-1.35.0.tar.bz2
+      - cd busybox-1.35.0:
+      	- make ARCH=arm defconfig
+      	   - default configuration is set
+      	- make ARCH=arm menuconfig
+      	    - if needed
+      	- make ARCH=arm CROSS_COMPILE=arm-linux-
+      	    - compile all sourcecode of binaries
+      	- make ARCH=arm CROSS_COMPILE=arm-linux- install
+      	    - _install directory is created
+            - all binaries are moved to _install directory
+            - copy
+              - cp -av busybox-1.35.0/_install/* qemurfs/
+            - we are done with bin and sbin binaries copying.
+            - system V init process started by kernel
+       
+     - Populate boot scripts into /etc
+       - create fstab : what filesystem to mount, where to mount? are defined.
+       - create inittab file
+       - create rcS file
+          - rc : run control files;
+       
+     - BusyBox framework provides /sbin/init and is particularly well adapted to embedded system;
+       
+     - create rootfsimage
+       -	cpio tool : for creating archieve.
+       
+            
+       
+      
+
+
+
+	 
+ 

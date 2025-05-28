@@ -1,0 +1,39 @@
+
+
+	-	DEPENDS += "libdyn"
+	-	RDEPENDS  means runtime depends.
+	
+	- user@ubuntu:~/tv_yocto/build-qemuarm$ bitbake usedyn
+		Loading cache: 100% |##########################################################################################################################################################################| Time: 0:00:00
+		Loaded 1334 entries from dependency cache.
+		NOTE: Resolving any missing task queue dependencies
+		
+		Build Configuration:
+		BB_VERSION           = "1.46.0"
+		BUILD_SYS            = "x86_64-linux"
+		NATIVELSBSTRING      = "universal"
+		TARGET_SYS           = "arm-poky-linux-gnueabi"
+		MACHINE              = "qemuarm"
+		DISTRO               = "poky"
+		DISTRO_VERSION       = "3.1.21"
+		TUNE_FEATURES        = "arm armv7ve vfp thumb neon callconvention-hard"
+		TARGET_FPU           = "hard"
+		meta                 
+		meta-poky            
+		meta-yocto-bsp       
+		meta-techveda        = "my-dunfell:aa0073041806c9f417a33b0b7f747d2a86289eda"
+		
+		Initialising tasks: 100% |#####################################################################################################################################################################| Time: 0:00:00
+		Sstate summary: Wanted 6 Found 0 Missed 6 Current 134 (0% match, 95% complete)
+		NOTE: Executing Tasks
+		WARNING: usedyn-0.1-r0 do_populate_lic: Could not copy license file /home/user/tv_yocto/poky/meta/files/common-licenses/GPL-1.0-only to /home/user/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi/usedyn/0.1-r0/license-destdir/usedyn/GPL-1.0-only: [Errno 2] No such file or directory: '/home/user/tv_yocto/poky/meta/files/common-licenses/GPL-1.0-only'
+		ERROR: usedyn-0.1-r0 do_populate_lic: QA Issue: usedyn: LIC_FILES_CHKSUM points to an invalid file: /home/user/tv_yocto/poky/meta/files/common-licenses/GPL-1.0-only [license-checksum]
+		ERROR: usedyn-0.1-r0 do_populate_lic: Fatal QA errors found, failing task.
+		ERROR: Logfile of failure stored in: /home/user/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi/usedyn/0.1-r0/temp/log.do_populate_lic.74247
+		ERROR: Task (/home/user/tv_yocto/poky/meta-techveda/recipes-example/usedyn/usedyn_0.1.bb:do_populate_lic) failed with exit code '1'
+		NOTE: Tasks Summary: Attempted 548 tasks of which 546 didn't need to be rerun and 1 failed.
+		
+		Summary: 1 task failed:
+		  /home/user/tv_yocto/poky/meta-techveda/recipes-example/usedyn/usedyn_0.1.bb:do_populate_lic
+		Summary: There was 1 WARNING message shown.
+		Summary: There were 2 ERROR messages shown, returning a non-zero exit code.

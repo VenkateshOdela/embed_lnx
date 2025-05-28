@@ -1,0 +1,53 @@
+#include <linux/interrupt.h>
+
+static irqreturn_t my_msix_interrupt_handler_0(int irq, void *dev_id)
+{
+	/* Handle interrupt vector 0 */
+	... return IRQ_HANDLED;
+}
+
+static irqreturn_t my_msix_interrupt_handler_1(int irq, void *dev_id)
+{
+	/* Handle interrupt vector 1 */
+	... return IRQ_HANDLED;
+}
+
+/* Probe function */
+int my_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+{
+	int ret, i;
+	struct msix_entry msix_entries[2];
+	/* Enable the device */
+	ret = pci_enable_device(pdev);
+	if (ret)
+		return ret;
+
+	/* Set up MSI-X */
+	msix_entries[0].entry = 0;
+	msix_entries[1].entry = 1;
+	ret = pci_enable_msix(pdev, msix_entries, 2);
+	if (ret) {
+		pci_disable_device(pdev);
+		return ret;
+	}
+
+	/* Register the MSI-X interrupt handlers */
+	for (i = 0; i < 2; i++) {
+		ret = request_irq(msix_entries[i].vector,
+				  i ==
+				  0 ? my_msix_interrupt_handler_0 :
+				  my_msix_interrupt_handler_1, 0,
+				  "my_pci_driver", pdev);
+		if (ret) {
+			while (--i >= 0)
+				free_irq(msix_entries[i].vector, pdev);
+			pci_disable_msix(pdev);
+			pci_disable_device(pdev);
+			return ret;
+		}
+	}
+
+	/* Do some device-specific setup */
+	... return 0;
+}
+

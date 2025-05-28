@@ -1,0 +1,10 @@
+ptr = malloc(1024);
+
+ptr1 =  malloc(140 *1024);
+
+ptr2 = malloc(1024);
+
+
+free(ptr2);
+
+free(ptr1);

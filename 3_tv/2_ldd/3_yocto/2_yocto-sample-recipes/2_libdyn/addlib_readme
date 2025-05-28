@@ -1,0 +1,28 @@
+ - .bb
+    
+    - LIcense is closed
+   
+  - add libdyn files to layer /home/user/tv_yocto/poky/meta-techveda/recipes-example
+  
+  - bitbake libdyn
+  -/tmp/work/<tool_chain>/libdyn
+  - /home/user/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi/libdyn/1.0-r0
+   
+  - tree /home/user/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi/libdyn/1.0-r0/package
+  
+   - user@ubuntu:~/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi/libdyn/1.0-r0/package$ tree
+		.
+		└── usr
+		    ├── include
+		    │   └── dyn.h
+		    ├── lib
+		    │   ├── libdyn.so -> libdyn.so.1.0.0
+		    │   ├── libdyn.so.1 -> libdyn.so.1.0.0
+		    │   └── libdyn.so.1.0.0
+		    └── src
+		        └── debug
+		            └── libdyn
+		                └── 1.0-r0
+		                    └── sample.c
+
+    

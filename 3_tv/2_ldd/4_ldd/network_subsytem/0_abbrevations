@@ -1,0 +1,25 @@
+
+Abbrevations : 
+
+	LAN : Local area network
+	WAN : Wide area network
+	
+	MTU : Maximum Transfer Unit (1500 bytes)
+	
+	lo   : loopback interface
+	eth0 : ethernet interface
+	
+	TCP : Transmission control Protocol
+	UDP : User datagram protocol
+	SCTP : Stream control transmission protocol
+	
+	ICMP : internet control message protocol(ping)
+	RTT  : Round trip time
+	
+	IGMP : Internet group managment protocol.
+	
+	ARP : Address resolution Protocol
+	RARP : Reverse Address resolution Protocol.
+	
+
+_____________________________________________________________________________________

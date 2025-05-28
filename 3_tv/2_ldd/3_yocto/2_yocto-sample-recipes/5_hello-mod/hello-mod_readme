@@ -1,0 +1,105 @@
+building kernel module in yocto
+
+- in meta-techveda layer, add receipe directory for module
+   - mkdir /poky/meta-techveda/recipes-mods
+
+
+ 
+ - add specific license if any error reported;
+ 
+  - bitbake hello-mod
+ 
+ 	- /home/user/tv_yocto/build-qemuarm/tmp/work/qemuarm-poky-linux-gnueabi
+ 	
+ 	- user@ubuntu:~/tv_yocto/build-qemuarm/tmp/work/qemuarm-poky-linux-gnueabi/hello-mod/0.1-r0$ tree image/image/
+		├── etc
+		│   ├── modprobe.d
+		│   └── modules-load.d
+		├── lib
+		│   └── modules
+		│       └── 5.4.219-yocto-standard
+		│           └── extra
+		│               └── hello.ko
+		└── usr
+		    └── include
+		        └── hello-mod
+		            └── Module.symvers
+		
+		10 directories, 2 files
+		
+	  - How to check is it part of image?
+	    - user@ubuntu:~/tv_yocto/build-qemuarm/tmp/deploy/images/qemuarm$ cat core-image-minimal-qemuarm-20221205183934.rootfs.manifest 
+			base-files qemuarm 3.0.14
+			base-passwd armv7vet2hf_neon 3.5.29
+			busybox armv7vet2hf_neon 1.31.1
+			busybox-hwclock armv7vet2hf_neon 1.31.1
+			busybox-syslog armv7vet2hf_neon 1.31.1
+			busybox-udhcpc armv7vet2hf_neon 1.31.1
+			eudev armv7vet2hf_neon 3.2.9
+			init-ifupdown qemuarm 1.0
+			initscripts armv7vet2hf_neon 1.0
+			initscripts-functions armv7vet2hf_neon 1.0
+			ldconfig armv7vet2hf_neon 2.31+git0+d4b7559457
+			libblkid1 armv7vet2hf_neon 2.35.1
+			libc6 armv7vet2hf_neon 2.31+git0+d4b7559457
+			libkmod2 armv7vet2hf_neon 26
+			libz1 armv7vet2hf_neon 1.2.11
+			modutils-initscripts armv7vet2hf_neon 1.0
+			myhello armv7vet2hf_neon 1.0
+			netbase armv7vet2hf_neon 6.1
+			packagegroup-core-boot qemuarm 1.0
+			run-postinsts noarch 1.0
+			sysvinit armv7vet2hf_neon 2.96
+			sysvinit-inittab qemuarm 2.88dsf
+			sysvinit-pidof armv7vet2hf_neon 2.96
+			update-alternatives-opkg armv7vet2hf_neon 0.4.2
+			update-rc.d noarch 0.8
+			
+	  - No hello-mod is present
+	  
+	  - SO goto gedit build-qemuarm/conf/local.conf
+	     - IMAGE_INSTALL:append = " myhello kernel-module-hello"
+	     
+	  - bitbake core-image-minimal
+	  
+	  - now check is hello kernel module present
+	  
+	  - user@ubuntu:~/tv_yocto/build-qemuarm$ cat tmp/deploy/images/qemuarm/core-image-minimal-qemuarm-20221212102012.rootfs.manifest 
+			base-files qemuarm 3.0.14
+			base-passwd armv7vet2hf_neon 3.5.29
+			busybox armv7vet2hf_neon 1.31.1
+			busybox-hwclock armv7vet2hf_neon 1.31.1
+			busybox-syslog armv7vet2hf_neon 1.31.1
+			busybox-udhcpc armv7vet2hf_neon 1.31.1
+			eudev armv7vet2hf_neon 3.2.9
+			init-ifupdown qemuarm 1.0
+			initscripts armv7vet2hf_neon 1.0
+			initscripts-functions armv7vet2hf_neon 1.0
+			kernel-5.4.219-yocto-standard qemuarm 5.4.219+git0+7e9781b04d_88065fdc7d
+			
+			kernel-module-hello-5.4.219-yocto-standard qemuarm 0.1
+			
+			ldconfig armv7vet2hf_neon 2.31+git0+d4b7559457
+			libblkid1 armv7vet2hf_neon 2.35.1
+			libc6 armv7vet2hf_neon 2.31+git0+d4b7559457
+			libkmod2 armv7vet2hf_neon 26
+			libz1 armv7vet2hf_neon 1.2.11
+			modutils-initscripts armv7vet2hf_neon 1.0
+			myhello armv7vet2hf_neon 1.0
+			netbase armv7vet2hf_neon 6.1
+			packagegroup-core-boot qemuarm 1.0
+			run-postinsts noarch 1.0
+			sysvinit armv7vet2hf_neon 2.96
+			sysvinit-inittab qemuarm 2.88dsf
+			sysvinit-pidof armv7vet2hf_neon 2.96
+			update-alternatives-opkg armv7vet2hf_neon 0.4.2
+			update-rc.d noarch 0.8
+	  
+	  - runqemu core-image-minimal nographics
+	  
+	  - demsg 
+	     - see hello module tainted.
+	  - 
+	    
+ 	
+ 	

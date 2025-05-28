@@ -1,0 +1,19 @@
+how system call works? trap signal
+System calls are a mechanism provided by the operating system that allows user applications to request services from the kernel. 
+When a user application makes a system call, it transitions from user mode to kernel mode, and the operating system takes control 
+of the CPU to perform the requested operation on behalf of the application.
+
+Here's a high-level overview of how a system call works in most modern operating systems:
+1.	User application executes a system call instruction: When a user application needs to request a service from the kernel, 
+    it executes a specific machine instruction that triggers a software interrupt (also called a trap or a syscall) to transfer 
+    control to the kernel.
+2.	Processor enters kernel mode: When the software interrupt occurs, the processor switches from user mode to kernel mode, 
+     giving the kernel unrestricted access to the system resources.
+3.	Kernel receives the system call request: The kernel receives the system call request and performs some initial 
+    validation on the parameters passed by the user application.
+4.	Kernel executes the system call: If the parameters are valid, the kernel executes the system call function that corresponds 
+     to the requested service. The system call function performs the requested operation on behalf of the user application.
+5.	Kernel returns to user mode: Once the system call function completes, the kernel sets the appropriate return values, and 
+     control is transferred back to the user application. The processor switches back to user mode, and the user application resumes execution.
+Regarding the trap signal, when a user application executes a system call instruction, it triggers a software interrupt that causes a trap signal to be sent to the kernel. The kernel has a trap handler that receives the signal and takes appropriate action to handle the system call request. The trap handler is responsible for switching the processor from user mode to kernel mode, validating the system call parameters, executing the system call function, and returning control to the user application.
+

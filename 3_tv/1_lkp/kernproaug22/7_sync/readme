@@ -1,0 +1,597 @@
+
+
+Synchronization in Kernel :
+
+
+Introduction :
+
+-- In a shared memory application, 
+
+   --Developers must ensure that 'shared resources' are protected from concurrent access.
+   
+   --The kernel is no exception. 
+   
+   --Shared resources require pro-tection from concurrent access because if multiple threads of execution access and
+     manipulate the data at the same time, the threads may overwrite each other’s changes or
+     access data while it is in an inconsistent state. 
+     
+   --Concurrent access of shared data is a recipe for instability that often proves hard to track down and
+     debug—getting it right at the start is important.
+     
+____________________________________________________________________________________________________________________________________________________________
+     
+Critical Regions and Race Conditions : 
+
+--Code paths that access and manipulate shared data are called critical regions (also called critical sections). 
+
+--It is usually unsafe for multiple threads of execution to access the same resource simultaneously.
+
+--To prevent concurrent access during critical regions, the programmer must ensure that code executes atomically—that is, operations complete without
+  interruption as if the entire critical region were one indivisible instruction.
+
+--It is a bug if it is possible for two threads of execution to be simultaneously executing within the same
+  critical region. 
+
+--When this does occur, we call it a race condition, so-named because the threads raced to get there first. 
+
+--Note how rare a race condition in your code might manifest itself—debugging race conditions is often difficult because they are not easily
+  reproducible. 
+  
+--Ensuring that unsafe concurrency is prevented and that race conditions do not occur is called synchronization.
+
+_______________________________________________________________________________________________________________________________________________________________
+
+--Two Machine Instructions
+  1.Regular Machine instructions(airthematic and bitwise).
+  2.Atomic instructions.(these operations cannot be interrupted).
+
+-- Old generation compilers like turboc won't support Atomic Operations;
+
+-- Compilers introduce Macros  
+
+_______________________________________________________________________________________________________________________________________________________________
+
+The Single Varaible :
+ -- Consider a simple shared resource, a single global integer, and a simple critical region, the operation of merely incrementing it:
+    i++; // global integer
+
+ -- This might translate into machine instructions to the computer’s processor that resemble the following:
+    -- get the current value of i from memory location and copy it into a register
+    -- add one to the value stored in the register
+    -- write back to memory the new value of i
+    
+ -- Thread 1 					Thread 2
+   get i (7)							 —
+   increment i (7 -> 8) 				—
+   write back i (8) 					—
+									— get i (8)
+									— increment i (8 -> 9)
+									— write back i (9)
+					
+ -- Most processors provide an instruction to atomically read, increment, and write back a single variable. Using this atomic instruction, the
+    only possible outcome is
+    
+ -- Thread 1 						Thread 2
+	increment & store i (7 -> 8) 	—
+    —                              increment & store i (8 -> 9)
+Or conversely
+
+-- Thread 1							 Thread 2
+   — 							   increment & store (7 -> 8)
+   increment & store (8 -> 9)          -
+   
+ -- It would never be possible for the two atomic operations to interleave.
+ 
+ -- The processorwould physically ensure that it was impossible.
+ 
+ ________________________________________________________________________________________________________________________________________________
+ 
+ -- increment i with atomic instruction
+    -- using 
+    
+    
+  --  x86 example of atomic instruction :
+    -- XADD DEST SRC
+       - operation :
+         - TEMP = SRC + DEST
+         - SRC = DEST
+         - DEST = TEMP
+     -- LOCK XADD DEST SRC
+      - This instruction can be used with a LOCK prefix to allow the instruction to be executed atomically;
+      
+ _______________________________________________________________________________________________________________________________________________
+ 
+ Comparing Atomic Instructiona and Volatile :
+ 
+ volatile int i;
+ 
+ -- Volatile is an instruction to compiler to say not to optimize the instrcution;
+ 
+   -- for example, The instruction reading data from memory location cannot be optimized.
+         -- because the data in that memory location can be overwritten by other reasons.
+         
+ -- Volatile is not simply allowing to read from memory location and it also not allow re-ordering of operations.
+         
+ Wait! Then what is a volatile for?
+
+-- volatile are not atomic they won't help in synchronization
+  -- Operations on volatile variables are not atomic.
+  
+  -- Volatile means saying compiler not to re-order operations;
+  
+  -- example 1 :
+     
+     int i;
+     void foo(void)
+     {
+       i++;
+     }
+     
+		-- get the current value of i and copy it into a register
+		-- add one to the value stored in the register
+		-- write back to memory the new value of i
+     
+  -- example 2 :
+     
+     int i,j;
+     void foo(void)
+     {
+       i++;
+       j++;
+     }
+        -- get the current value of j and copy it into a register
+		-- get the current value of i and copy it into a register
+		
+		-- add one to the value stored in the register for j
+		-- add one to the value stored in the register for i
+		
+		-- write back to memory the new value of j 		
+		-- write back to memory the new value of i 
+		
+   -- example 3 : (Volatile means saying compiler not to re-order operations)
+     
+     int i,j;
+     void foo(void)
+     {
+       i++;
+       j++;
+     }
+       
+		-- get the current value of i and copy it into a register	
+		-- add one to the value stored in the register for i
+		-- write back to memory the new value of i 
+		
+		-- get the current value of j and copy it into a register
+		-- add one to the value stored in the register for j
+		-- write back to memory the new value of j 	
+		
+    -- atomic operation is run time. 
+    -- volatile is compile time;
+    
+  -- When we should use volatile?
+    -- when Memory location can be modified by other entity
+       - Other threads for a memory location.
+       - other processes for a shared memory location.
+       - IO devices for an IO address.
+_____________________________________________________________________________________________________________________________________________________________
+
+Atomic Operations :
+ -- Examples :
+	 - fetch-and-add
+	 - test-and-set
+	 - compare-and_swap
+ -- Linux provide two APIs
+     - Integer atomic operations.
+     - Bitwise atomic operations.
+
+ -- Atomic integer operations :
+   -- typedef struct {
+        int counter; // 32 bit counter
+      } atomic_t;
+      
+   -- typedef struct {
+        long counter; // 64 bit counter
+       } atomic64_t;
+       
+       atomic_t v;
+       atomic_t u=ATOMIC_INIT(0);
+       
+       atomic_set(&v,4);
+       atomic_add(2,&v);
+       atomic_inc(&v);
+       
+       liux/include/linux/atomic.h
+       
+  -- where these counters are useful ?
+     -- these are useful while designing API for lock.
+     
+  -- test_bit vs __test_bit()
+     -- __test_bit() functions are not called directly;
+     
+  -- Atomic Arithematic operations
+  -- Atomic bitwise operations
+  
+  Atomic operations:
+  -- Operations that read or change data in a single uninterrupted step are called atomic operations.
+  -- Examples:
+     -- Test and set: Returns the current value of a memory location and replaces it with a given new alue.
+     -- Compare and swap (CAS): Compares the contents of a memory location with a given value and
+        if found equal, it replaces with the given new value.
+        
+  Race Condition :  
+   -- If two or more threads try to access a same shared data in parallel, race conditions will occur.
+   -- Using atomic counter, software mutual exclusion locking protocols can be designed to protect large
+      amounts of shared data from data races.
+  
+  Problem Statement :   
+  -- let us say, i have structure with different members as shared data. Now Atomic instructions won't work;
+  -- atomic instructions only work on fixed data type atomic_t or atomic64_t, they won't work on custome sized data type
+  -- Then we require mutual exclusion APIs.
+     -- they internally use lock counter, based on state of lock counter, lock is considered to be held or lock is said to be available.
+     -- that locking counter is atomic counter;
+____________________________________________________________________________________________________________________________________________  
+  Locks :
+  -- All thread libraries will provide locking and unlocking functions which can be used by the developers to synchronize threads.
+  
+     1.Wait Locks.
+       -- Wait locking interface push the caller process into wait state when lock acquisition fails.
+       -- These are recommended when critical sessions are long(more operations) and undeterministic.
+       -- Example : Semaphore,Mutex;
+       
+     2.Poll Locks.
+       -- Poll locking interface put the caller process into a loop until lock is available.
+       -- When the critical sessions are short(less operations) and deterministic.
+       -- Example : Spin;
+       
+                     Locks
+                   /       \
+                  /         \
+               Wait         Poll
+               /  \          |
+              /    \         |
+         Semaphore  Mutex   Spin 
+ _______________________________________________________________________________________________________________________________________________    
+   -- Semaphore :
+     -- Semaphores in Linux are sleeping locks.When a task attempts to acquire a semaphore that is unavailable, the semaphore places 
+        the task onto a wait queue and puts the task to sleep.
+     -- The processor is then free to execute other code.When the semaphore becomes available, one of the tasks on the wait queue 
+        is awakened so that it can then acquire the semaphore.
+        
+     -- When Semaphores Used?
+     
+        -- Semaphores are used when critcal section have more operations to perform and take long time to release lock;   
+        -- Because the contending tasks sleep while waiting for the lock to become available,semaphores are well suited 
+           to locks that are held for a long time.
+           -- when we know, thread A critical section have 10 operations to perform and released the lock, then,
+              good practice is Thread B should wait(instead of spinning); So Semaphore preferred in this Case;
+              
+        -- No Recursive Dead Locks will happen with Semaphore;
+           -- You can (although you might not want to) sleep while holding a semaphore because you will not deadlock when another process acquires 
+              the same semaphore. (It will just go to sleep and eventually let you continue.)
+              
+     
+     -- When Semaphores not Used?
+     
+        -- Semaphores are not used when critical sections have only less operations to perform and release the lock in short time;      
+        -- Conversely, semaphores are not optimal for locks that are held for short periods because the overhead of sleeping, 
+           maintaining the wait queue, and waking back up can easily outweigh the total lock hold time.
+           -- when we know, thread A critical sectin have only 1 operation to perform,then Thread B can use spinlock.
+              So in this case Semaphore is not preferred;
+              
+        -- In Interrupt Context or in Interrupts Semaphores are not used;
+           -- Because a thread of execution sleeps on lock contention, semaphores must be ob-tained only in process context 
+              because interrupt context is not schedulable.
+              
+     -- Semaphore vs Spin Lock
+     
+      -- When you do have a choice, the decision between semaphore and spin lock should be based on lock hold time.
+      -- Spinlock can Disables the kernel pre-emption.
+      -- But,Code holding a semaphore can be preempted.In semphores Kernel pre-emption is disabled;
+      
+     Counting and Binary Semaphores :
+     
+      -- A final useful feature of semaphores is that they can allow for an arbitrary number of simultaneous lock holders.
+         -- Whereas spin locks permit at most one task to hold the lock at a time, 
+         -- the number of permissible simultaneous holders of semaphores can be set at declaration time.
+            - struct semaphore name;
+            - sema_init(&name, count);
+         -- This value is called the usage count or simply the count.
+         -- Binary Semaphore :
+            - In this case, the count is equal to one, and the semaphore is called a binary semaphore (because it is either held by
+              one task or not held at all) or a mutex (because it enforces mutual exclusion).
+         -- Counting Semaphore :
+            - Alternatively, the count can be initialized to a nonzero value greater than one.
+              In this case, the semaphore is called a counting semaphore, and it enables at most 'count' holders of the lock at a time.
+            - Counting semaphores are not used to enforce mutual exclusion because they enable multiple threads of execution in the 
+              critical region at once.
+            - mutex (a semaphore with a count of one).
+          --down() and up() :
+            - The down() method is used to acquire a semaphore by decrementing the count by one. 
+              If the new count is zero or greater, the lock is acquired and the task can enter the critical region. 
+              If the count is negative, the task is placed on a wait queue, and the processor moves on to something else.
+              You down a semaphore to acquire it.
+            - The up() method is used to release a semaphore upon completion of a critical region.This is called upping the semaphore.
+              This method increments the count value; 
+              if the semaphore’s wait queue is not empty, one of the waiting tasks is awakened and allowed to acquire the semaphore.
+              
+              
+
+		  -- Semaphore Methods
+			Method 									Description
+			
+		    init_MUTEX(struct semaphore *) 			Initializes the dynamically created semaphore
+													with a count of one.
+			sema_init(struct semaphore *, int) 		Initializes the dynamically created semaphore
+													to the given count
+			init_MUTEX_LOCKED(struct semaphore *) 	Initializes the dynamically created semaphore
+													with a count of zero (so it is initially locked)
+													
+
+			down(struct semaphore *) 				Tries to acquire the given semaphore and
+													enter uninterruptible sleep if it is contended	
+																									
+			down_interruptible(struct semaphore *) 	Tries to acquire the given semaphore and
+													enter interruptible sleep if it is contended
+													
+			down_trylock(struct semaphore *) 		Tries to acquire the given semaphore and
+													immediately return nonzero if it is contended
+													
+													
+			up(struct semaphore *) 					Releases the given sem
+			
+	 Semaphores in User Space:
+	 
+	    -- Semaphores
+	       - POSIX Semaphores.
+	       - System V Semaphores.
+	 
+	    -- man sem_overview
+	    
+	    -- sem_open() - : sem_open() creates a new POSIX  named semaphore , and initialize value
+	        --	if sem_open() creation failed use sem_unlink()
+	        --	sem_t *sem_open(const char *name, int oflag, mode_t mode, unsigned int value)
+	        	-	const char *name : argument takes name of semaphore
+	        	-	unsigned int value : take counting semaphore value.
+	        
+	    -- sem_init() - not used anywhere in carrier code;
+	    
+	    -- sem_wait() | sem_timedwait() | sem_trywait()
+	       - sem_wait()     - 	waits forever for lock if not availble 
+	       	- decrement counter, 
+	       		-	if count is zero or greater, acquire the lock and enter critical region;
+	            -	if count is negative, wait for lock till lock is avaliable.  
+	                                        
+	       - sem_timedwait() - wait for lock for defined time only;
+	       
+	       - sem_trywait() - it won't wait; if lock is avaliable at that time takes it and other wise throws a error;
+	        
+	    -- sem_post() - increment counter and release lock
+	    
+	    -- sem_close()
+	    
+	    -- sem_destroy()
+	   	   
+ ___________________________________________________________________________________________________________________________________________________             
+      Read/Write (rw) Locks :
+      -- Standard mutual exclusion protocols are not recommended on shared data that is 'frequently read' and
+         rarely updated(Written).
+      -- For reader intensive applications, rw mutual exclusion lock protocols should be used.
+      -- rw locks allows sharing the lock in between multiple reader threads and mutual exclusion in between
+         writer threads.
+      -- Consider 10 threads, Where 9 threads read data from critical region and only one thread write data to critical region;
+      -- In Reader/writer locks, lock is available in a shared (for readers) and an exclusive (for writers) form.
+         
+      -- There are separate APIs for RW locks for semaphores,spinlocks and mutex;
+ ______________________________________________________________________________________________________________________________________________________     
+      Mutex:
+      
+      -- mutex (a semaphore with a count of one).
+      -- Only one task can hold the mutex at a time.That is, the usage count on a mutex is always one.
+ 
+      -- Mutex(Wait Locks)
+         * mutex_lock(struct mutex *) -- Locks the given mutex; sleeps if the lock is unavailable.
+         * mutex_lock_interruptible(struct mutex *) -- can be killed by kill signal;
+         * mutex_lock_killable(struct mutex *) -- when it is wait state, responds only to kill signal;
+         * mutex_trylock(struct mutex *) -- non blocking call; it won't put caller to wait state. if lock present return 0, if lock not present returns -1
+         
+      -- Mutex Methods
+			Method 							Description
+			mutex_lock(struct mutex *) 		Locks the given mutex; sleeps if the lock is
+											unavailable
+			mutex_unlock(struct mutex *) 	Unlocks the given mutex
+			
+			mutex_trylock(struct mutex *) 	Tries to acquire the given mutex; returns one if suc-
+											cessful and the lock is acquired and zero otherwise
+			mutex_is_locked (struct mutex *) Returns one if the lock is locked and zero otherwise
+ _________________________________________________________________________________________________________________________________________________________   
+     SpinLock :
+      
+      -- A spin lock is a lock that can be held by at most one thread of execution. 
+      -- If a thread of execution attempts to acquire a spin lock while it is already held, which is called contended, 
+         the thread busy loops—spins—waiting for the lock to become available. 
+      -- If the lock is not contended, the thread can immediately acquire the lock and continue.
+      -- The spinning prevents more than one thread of execution from entering the critical region at any one time.
+      
+      -- The fact that a contended spin lock causes threads to spin (essentially wasting processor time) while waiting 
+         for the lock to become available is salient. 
+         
+      -- Later in this chapter we discuss semaphores, which provide a lock that makes the waiting
+         thread sleep, rather than spin, when contended.
+         
+      -- The lock can be held simultaneously by at most only one thread of execution. 
+         Consequently, only one thread is allowed in the critical region at a time.
+         This provides the needed protection from concurrency on multiprocessing machines.
+         
+      Where SpinLocks are used ?
+      -- Spin locks can be used in interrupt handlers,
+         - whereas semaphores cannot be used because they sleep.
+         - if a lock is used in an interrupt handler, you must also disable local interrupts (interrupt requests on the current processor) 
+           before obtaining the lock. 
+         - Otherwise, it is possible for an interrupt handler to interrupt kernel code while the lock is held and attempt to reacquire the lock.
+         - The interrupt handler spins, waiting for the lock to become available.
+         - The lock holder, however, does not run until the interrupt handler completes.
+         - This is an example of the 'double-acquire deadlock'.
+         - Note that you need to disable interrupts only on the current processor. 
+        
+      Where SpinLocks are not used ?
+       
+       
+       -- Spin Lock API :
+          	Method 					Description
+			spin_lock() 			Acquires given lock
+			spin_lock_irq() 		Disables local interrupts and acquires given lock
+			spin_lock_irqsave() 	Saves current state of local interrupts, disables local inter-
+									rupts, and acquires given lock
+									
+			spin_unlock() 			Releases given lock
+			spin_unlock_irq() 		Releases given lock and enables local interrupts
+			spin_unlock_irqrestore() Releases given lock and restores local interrupts to given pre-
+									vious state
+									
+			spin_lock_init()		Dynamically initializes given spinlock_t
+			spin_trylock() 			Tries to acquire given lock; if unavailable, returns nonzero
+			spin_is_locked() 		Returns nonzero if the
+      
+ _______________________________________________________________________________________________________________________________________________________     
+     
+    Spinlock vs Semaphore/Mutex
+    
+          Requirement 							Recommended Lock
+          
+       * Long lock hold time 					Semaphore/Mutex is Preferred.
+          - More number of operations to 
+            peform in critical region.
+            
+       * Short lock hold time 					Spin Lock is Preferred.
+           - Only 1 operation to peform
+             in critical region 
+                         
+	   * Need to lock from interrupt context 	Spin lock is required.
+	   
+       * Need to sleep while holding lock       Sempahore/Mutex is required.
+       
+	   * Low overhead locking                   Spin lock is preferred.
+ _____________________________________________________________________________________________________________________________________________________________   
+     semaphore vs mutex
+     
+     - If the semaphore lock is taken by one thread1, and this semaphore lock can also be released by other other thread2;
+     
+     - If the mutex lock is taken by one thread1, and this mutex lock can only be released by same thread1;
+
+________________________________________________________________________________________________________________________________________
+          
+  -- Mutual Exclusion APIs :
+     
+     -- contending. (if lock is not available it goes into wait state,going to wait state means some other task can take CPU) 
+        - Contender going out of state if lock is not avalible.
+        - waitlock (mutex)
+        
+      -- -- Polling.  (if lock is not available , it Keeps re-trying for lock until it is available)
+        - Spinlock; Term Spin implies polling.
+      
+        
+        
+        
+        
+  -- Why we need locking in kernel code ?
+    -- kernel is fully concurrent, kernel many services, many user applications look for one service, it should be shared among users.
+    -- kernel is re-entrant kernel.
+       -- re-entrant function:
+          - A function is said to be reentrant if there is a provision to interrupt the function in the course of execution, service the 
+            interrupt service routine and then resume the earlier going on function, without hampering its earlier course of action.
+    
+
+Dead Lock:
+
+   -- A deadlock is a condition involving one or more threads of execution and one or more resources, 
+   	  such that each thread waits for one of the resources, but all the resources are already held.
+   -- The threads all wait for each other, but they never make any progress toward
+      releasing the resources that they already hold.
+   -- Therefore, none of the threads can continue, which results in a deadlock.
+   
+   -- Examples : 
+     --  1. Accidental Release : (lock is accidentally released by other thread)
+     
+           fs_write()
+           {
+             mutex_unlock(&mutex); // accidentaly released the same lock in other thread;
+           }
+           
+           fs_read()
+           {
+             mutex_lock_interruptible(&mutex);
+             
+             /* critical code */
+             mutex_unlock(&mutex); // then trying to unlock same lock will create deadlock;
+           
+           }
+           
+           Note : unlocking lock which is already unlocked is deadlock.
+           
+      -- 2. Recursive DeadLOck: (trying to acquire the same lock again in single thread)
+            -- this dead lock will be consistent and occurs every time;
+           
+             fs_read()
+             {
+               
+               mutex_lock();
+               
+               mutex_lock(); ( trying to acquire log again in same thread is deadlock)
+         
+             }
+             
+            Note : trying to re-acquire the already acquired lock is deadlock.
+            
+      -- 3. Owner Death Dead Lock(): (has owner/thread exited with error return, then other thread waiting for this lock will be in dead lock forever) 
+            -random dead lock
+            fs_write()
+            {
+               mutex_lock(&mutex);
+               
+               ptr =kmalloc(..);
+               if(ptr==NULL)
+                RETURN -ENOMEM; // this return with out unlocking will deadlock;
+                
+               mutex_unlock()                           
+            }
+            
+      -- 4. Circular Dead lock
+      
+             fs_write()
+             {
+              	mutex_lock(&A);
+              	mutex_lock(&B);
+              	
+              	/* Critical COde */
+              	
+              	mutex_unlock(&B);
+              	mutex_unlock(&A);         
+             }
+             
+             fs_read()
+             {
+                mutex_lock(&B);
+              	mutex_lock(&A);
+              	
+              	/* Critical COde */
+              	
+              	mutex_unlock(&A);
+              	mutex_unlock(&B);  
+                      
+             }
+             
+        
+
+	 
+ 
+ 
+ 
+		
+ 
+   
+   
+
+
+
+
+

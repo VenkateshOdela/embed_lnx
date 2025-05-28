@@ -1,0 +1,26 @@
+   
+   
+   - polymorphism :
+   
+   		-	compile time polymorphism
+   				- function overloading
+   				- operator overloading
+   			
+   		-	runtime polymorphism
+   				- virtual functions
+   				
+   				
+   				
+   
+   Compile-Time Polymorphism Vs. Run-Time Polymorphism :
+   
+	Compile Time Polymorphism										Run-Time Polymorphism
+	
+At Compile time, which functions to be called is decided.		At Runtime, which function to be called is decided.
+
+Also known as early or static binding							Also known as late or dynamic binding
+
+It executes faster because the function is resolved at 
+compilation time only.	                                       It executes slower because the function is resolved at Run-time.
+
+It is achieved through function and operator overloading	   It is achieved through function overriding and virtual functions

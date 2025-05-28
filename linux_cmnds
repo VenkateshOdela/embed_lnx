@@ -1,0 +1,84 @@
+1. Unzip km.zip file
+
+   $ unzip km.zip
+     If the source and destination directories are the same
+
+   $ unzip km.zip -d <destination_path>
+     if you want to extract to a particular destination folder
+
+_________________________________________________________________________________________
+
+2. Open file from terminal
+
+   $ gedit <file> &
+_________________________________________
+
+3. open image from terminal
+   $shotwell <image> &
+
+ - open pdf from the terminal
+   $ evince lkp_Robert_Love.pdf &
+__________________________________________________
+
+4. If your tarball is compressed with 'bzip2', run
+$ tar xvjf linux-x.y.z.tar.bz2
+
+If it is compressed with GNU zip, run
+$ tar xvzf linux-x.y.z.tar.gz
+
+
+$ tar xvf linux-5.9.6.tar.xz
+_____________________________________________________________________________________________
+
+-To Know about cpuinfo
+
+$ cat /proc/cpuinfo
+
+____________________________________________________________________________________________
+
+
+history is command to see previous commandeds excuted on terminal
+
+$ history 20
+
+$ history 30
+
+-> above commands will print last 20 and 30 commands used;
+___________________________________________________________________
+
+dd command to create 1GB, 100MB, 10MB sized dummy files :
+
+To Create 1GB file :
+
+dd if=/dev/zero of=testfile bs=1024 count=1024000
+
+To Create 100MB file :
+
+dd if=/dev/zero of=testfile bs=1024 count=102400
+
+To Create 10MB file :
+
+dd if=/dev/zero of=testfile bs=1024 count=10240
+______________________________________________________________________
+
+df - report file system disk space usage
+
+____________________________________________________________
+
+du - estimate file space usage
+
+___________________________________________________________________
+
+chmod 777 backup.sh
+
+chgrp root backup.sh
+
+
+
+gnome-screenshot
+__________________________________________________________________
+ find . -name ping.c
+./lwip-STABLE-2_2_0_RELEASE/contrib/apps/ping/ping.c
+
+____________________________________________________________
+

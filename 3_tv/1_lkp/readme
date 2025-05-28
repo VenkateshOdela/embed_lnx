@@ -1,0 +1,471 @@
+
+
+Download kernel sources from kernel.org.
+
+  
+
+/home/user/embedded_linux/linux-5.16.10/scripts
+
+  - automation scripts are present in this directory;
+
+make help
+  
+   - Undestand different targets
+
+cat README
+
+
+Linux kernel
+============
+
+Documentation/admin-guide/README.rst
+There are several guides for kernel developers and users. These guides can
+be rendered in a number of formats, like HTML and PDF. Please read
+Documentation/admin-guide/README.rst first.
+
+In order to build the documentation, use ``make htmldocs`` or
+``make pdfdocs``.  The formatted documentation can also be read online at:
+
+    https://www.kernel.org/doc/html/latest/
+
+There are various text files in the Documentation/ subdirectory,
+several of them using the Restructured Text markup notation.
+
+Please read the Documentation/process/changes.rst file, as it contains the
+requirements for building and running the kernel, and information about
+the problems which may result by upgrading your kernel.
+
+STEP 1 : Chossing the kernel configuration :
+
+
+If something goes wrong
+-----------------------
+
+ - If you have problems that seem to be due to kernel bugs, please check
+   the file MAINTAINERS to see if there is a particular person associated
+   with the part of the kernel that you are having trouble with. If there
+   isn't anyone listed there, then the second best thing is to mail
+   them to me (torvalds@linux-foundation.org), and possibly to any other
+   relevant mailing-list or to the newsgroup.
+
+build binary kernel?
+but binary kernel for which mahine?
+
+     "make config"      Plain text interface.
+
+     "make menuconfig"  Text based color menus, radiolists & dialogs.
+
+
+Configuration targets:
+  config	  - Update current config utilising a line-oriented program
+  nconfig         - Update current config utilising a ncurses menu based program
+  menuconfig	  - Update current config utilising a menu based program
+  xconfig	  - Update current config utilising a Qt based front-end
+  gconfig	  - Update current config utilising a GTK+ based front-end
+
+-- configuration stored in one config file;
+
+$make menuconfig   --- is failed with below error:
+
+user@ubuntu:~/embedded_linux/linux-5.16.10$ make menuconfig
+  LEX     scripts/kconfig/lexer.lex.c
+/bin/sh: flex: command not found
+scripts/Makefile.host:9: recipe for target 'scripts/kconfig/lexer.lex.c' failed
+make[1]: *** [scripts/kconfig/lexer.lex.c] Error 127
+Makefile:619: recipe for target 'menuconfig' failed
+make: *** [menuconfig] Error 2
+
+-- used below command to install necessary packages for compiling the linux sources :
+
+sudo apt-get install libncurses-dev flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf
+
+or 
+
+sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
+
+Software requirements
+---------------------
+
+   Compiling and running the 5.x kernels requires up-to-date
+   versions of various software packages.  Consult
+   :ref:`Documentation/process/changes.rst <changes>` for the minimum version numbers
+   required and how to get updates for these packages.  Beware that using
+   excessively old versions of these packages can cause indirect
+   errors that are very difficult to track down, so don't assume that
+   you can just update packages when obvious problems arise during
+   build or operation.
+
+====================== ===============  ========================================
+        Program        Minimal version       Command to check the version
+====================== ===============  ========================================
+GNU C                  5.1              gcc --version
+Clang/LLVM (optional)  10.0.1           clang --version
+GNU make               3.81             make --version
+binutils               2.23             ld -v
+flex                   2.5.35           flex --version
+bison                  2.0              bison --version
+pahole                 1.16             pahole --version
+util-linux             2.10o            fdformat --version
+kmod                   13               depmod -V
+e2fsprogs              1.41.4           e2fsck -V
+jfsutils               1.1.3            fsck.jfs -V
+reiserfsprogs          3.6.3            reiserfsck -V
+xfsprogs               2.6.0            xfs_db -V
+squashfs-tools         4.0              mksquashfs -version
+btrfs-progs            0.18             btrfsck
+pcmciautils            004              pccardctl -V
+quota-tools            3.09             quota -V
+PPP                    2.4.0            pppd --version
+nfs-utils              1.0.5            showmount --version
+procps                 3.2.0            ps --version
+udev                   081              udevd --version
+grub                   0.93             grub --version || grub-install --version
+mcelog                 0.6              mcelog --version
+iptables               1.4.2            iptables -V
+openssl & libcrypto    1.0.0            openssl version
+bc                     1.06.95          bc --version
+Sphinx\ [#f1]_         1.7              sphinx-build --version
+====================== ===============  ========================================
+
+
+
+$make menuconfig
+
+
+- use space bar to select various options::::ss
+
+
+if you save configuration, it is saved to .config file;
+
+to which machine we are building kernel?
+
+default: x86-64 for host machine
+
+Now i want build kernel for arm machine,but how?
+
+$ make ARCH=arm menuconfig
+
+When menuconfig opened graphical menu, it shows
+Linux/arm  5.16.1000    kernl
+
+
+user@ubuntu:~/embedded_linux/linux-5.16.10$ ls arch/
+alpha  arm    csky   hexagon  Kconfig  microblaze  nds32  openrisc  powerpc  s390  sparc  x86
+arc    arm64  h8300  ia64     m68k     mips        nios2  parisc    riscv    sh    um     xtensa
+
+All above or argments ARCH= 
+
+
+STEP 2 : Initiating compile and build
+
+$$$$$make enter
+
+vm_linux > i generated called raw kernel image.
+bzimage -> is generated called loadable kernel image(arch/x86-64/boot)
+
+STEP 3 : install/copy module images onto root file system
+
+$make modules_install
+
+ --install/copy module images onto root file system
+
+/lib/modules
+
+STEP 4: Configure Boot-Loader:
+
+$make install
+
+--copies loable kernel image & relevant files into /boot directory of root file system.
+
+-j<cpu_cores>
+cpu cores given to perform compiling first;1 2 3 4
+--------------------------------------------------------------------------------------------
+make[1]: *** No rule to make target 'debian/canonical-certs.pem', needed by 'certs/x509_certificate_list'.  Stop.
+Makefile:1846: recipe for target 'certs' failed
+make: *** [certs] Error 2
+
+change
+
+CONFIG_SYSTEM_TRUSTED_KEYS="debian/canonical-certs.pem"
+
+to
+
+CONFIG_SYSTEM_TRUSTED_KEYS=""
+
+change 
+
+CONFIG_SYSTEM_REVOCATION_KEYS="debian/canonical-revoked-certs.pem"
+
+to       
+
+CONFIG_SYSTEM_REVOCATION_KEYS=""
+________________________________________________________________________________________________
+
+-- out of tree module :
+
+base/scripts/
+ Makefile.modfinal             
+ Makefile.modinst                   
+ Makefile.modpost 
+
+--/lib/modules
+
+user@ubuntu:~/embedded_linux/linux-5.16.10/scripts$ ls /lib/modules/
+5.4.0-100-generic  5.4.0-109-generic  5.4.0-120-generic  5.4.0-84-generic  5.4.0-94-generic
+5.4.0-104-generic  5.4.0-110-generic  5.4.0-121-generic  5.4.0-90-generic  5.4.0-96-generic
+5.4.0-105-generic  5.4.0-113-generic  5.4.0-122-generic  5.4.0-91-generic  5.4.0-99-generic
+5.4.0-107-generic  5.4.0-117-generic  5.4.0-124-generic  5.4.0-92-generic
+
+--uname -a
+5.4.0-124-generic
+
+--intree module list
+
+tree /lib/modules/5.4.0-124-generic/kernel/
+---------------------------------
+
+user@ubuntu:/lib/modules/5.4.0-124-generic/build$ ls
+arch   crypto         fs       ipc      kernel    mm              samples   sound   usr
+block  Documentation  include  Kbuild   lib       Module.symvers  scripts   tools   virt
+certs  drivers        init     Kconfig  Makefile  net             security  ubuntu
+_________________________________________________________________________________________
+compile it as in-tree module
+
+cp hello.c /home/user/embedded_linux/linux-5.16.10/init
+
+vim Kconfig
+
+if you add service in Kconfig file, it appears in menuconfig.(it shows additional menu option)
+
+for in-tree module it isnot needed to write separate makefile, it is appended in existing files,(Kconfig ..)
+
+Only for upstream intree modules are used; to be part of linux kernel source code;
+
+Upstreaming means becoming part of linux kernel source code;
+_________________________________________________________________________________________________
+
+Spawning Multiple Build Jobs:
+
+-The make program provides a feature to split the build process into a number of parallel jobs. 
+
+-Each of these jobs then runs separately and concurrently, significantly speeding up the
+build process on multiprocessing systems. 
+
+-It also improves processor utilization because the time to build a large source tree includes 
+significant time in I/O wait (time in which the process is idle waiting for an I/O request to complete).
+
+-By default, make spawns only a single job because Makefiles all too often have incorrect
+dependency information. 
+
+-With incorrect dependencies, multiple jobs can step on each other’s toes, resulting in errors in the build process.
+The kernel’s Makefiles have correct dependency information, so spawning multiple jobs does not result in failures.
+
+-To build the kernel with multiple make jobs, use
+$ make -jn
+Here, n is the number of jobs to spawn. Usual practice is to spawn one or two jobs per
+processor.
+
+For example, on a 16-core machine, you might do
+$ make -j32 > /dev/null
+Using utilities such as the excellent distcc or ccache can also dramatically improve kernel build time
+
+
+-For cpu cores = 4
+$ make -j8 
+
+_________________________________________________________________________________________________________________________
+No Memory Protection :
+
+When a user-space application attempts an illegal memory access, the kernel can trap the
+error, send the SIGSEGV signal, and kill the process. 
+
+If the kernel attempts an illegal memory access, however, the results are less controlled. (After all, who is going to look after the kernel?) Memory violations in the kernel result in an oops, which is a major kernel error.
+
+It should go without saying that you must not illegally access memory, such as dereferencing a NULL pointer—but within the kernel, the stakes are much higher!
+
+Additionally, kernel memory is not pageable.Therefore, every byte of memory you
+consume is one less byte of available physical memory. Keep that in mind the next time
+you need to add one more feature to the kernel!
+
+_________________________________________________________________________________________________
+
+--$modinfo hello.ko
+
+   -gives to information about kernel module .ko
+   
+filename:       /home/user/git_embd_linux/embd_linux/tv/lkp/kernproaug22/kbuild/hellomod/hello.ko
+description:    First kernel module
+author:         raghu@techveda.org
+license:        Dual MIT/GPL
+srcversion:     F13857410DAE70C101E8335
+depends:        
+retpoline:      Y
+name:           hello
+vermagic:       5.4.0-124-generic SMP mod_unload modversions
+
+__________________________________________________________________________________________________
+-- insmod
+   
+ insmod - Simple program to insert a module into the Linux Kernel
+
+ $ sudo insmod hell.ko
+
+Q.After insertion if we reboot system, will module remain in kernel?
+A:No,module loaded into RAM only;
+
+
+insmod system call identification? (use strace tool $ sudo strace insmod hello.ko 
+
+init_module() loads an ELF image into kernel space
+
+The finit_module() system call is like init_module(), but reads the module to be loaded from
+the file descriptor fd.
+
+insmod calling system call finit_module
+
+finit_module system call, from mmap retuned a map address, map kernel module from user space to kernel
+space;
+
+after finit_module, munmap() is called to discard userspace address;
+____________________________________________________________________________________________________
+
+       int init_module(void *module_image, unsigned long len,
+                       const char *param_values);
+
+       int finit_module(int fd, const char *param_values,
+                        int flags);
+                       
+       init_module()  loads an ELF image into kernel space, performs any necessary symbol relocations, initializes module parameters to val‐
+       ues provided by the caller, and then runs the module's init function.
+       
+       The  finit_module()  system  call is like init_module(), but reads the module to be loaded from the file descriptor fd.  It is useful
+       when the authenticity of a kernel module can be determined from its location in the filesystem;
+
+
+______________________________________________________________________________________________________
+
+
+-- lsmod
+lsmod - Show the status of modules(intree+out of tree) in the Linux Kernel
+
+___________________________________________________________________________________________________
+
+--rmmod - Simple program to remove a module from the Linux Kernel
+
+ $ rmmod hello
+
+ - removing image (no need extension).
+
+ - rmmod - Simple program to remove a module from the Linux Kernel
+
+
+rmmod using which system call? (using strace)
+$ sudo strace rmmod hello
+
+ delete_module()
+
+ delete_module() - unload a kernel module
+
+__________________________________________________________________________________________________
+mmap : 
+
+mmap allows a process to directly gain access to file buffer(page cache / io_cache);
+
+when you load file, file loaded to Ram(FIle buffer-Page Cache/IO cacheq);
+
+mmap returns a starting address of new mapping of file/device;
+_________________________________________________________________________________________________
+
+kernel headers : 
+
+______________________________________________________________________________________$____________
+$ make
+
+$ sudo  insmod hello.ko
+
+$ dmesg
+
+_init_function
+ return 0 -> module linkaage done
+ return -1 -> module linkage not done;;
+
+ddump_stack()
+
+_______________________________________________________________________________________________
+
+$modprobe
+
+modprobe - Add and remove modules from the Linux Kernel
+
+__________________________________________________________________________________________
+systemd
+
+/var/log/syslog
+
+kernel log buffer size 
+4KB - 128KB
+
+_________________________________________
+
+klogctl()
+
+printk
+
+kernel panic - KERN-EMERG
+
+_________________________________________________________
+
+module parameters:
+
+_insmod param.ko name=xyz irq=10 base_port=10,20,30,40,50
+
+_passing arguments to .ko
+__________________________________________________________
+
+ref count : the number of modules using it;
+
+ref count =0 : number of processes using the module is Zero;
+_________________________________________________________ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

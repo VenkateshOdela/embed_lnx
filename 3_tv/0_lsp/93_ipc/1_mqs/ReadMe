@@ -1,0 +1,91 @@
+
+1.system V message queues : 
+
+  #include <sys/msg.h>
+
+  msgget()  :  create a system V message queue
+
+  msgsnd() :  Send a message
+
+  msgrcv() :  Receive a message
+
+
+
+2.posix message Queues :
+
+  #include <mqueue.h>
+
+  mq_open() - open a posix message queue
+
+  mq_send() - Send a message
+
+  mq_recieve() - Receive a message
+  
+  mq_close()
+  
+  mq_unlink()
+  
+  ___________________
+  
+  mqd_t mq_open(const char *name, int oflag, mode_t mode,struct mq_attr *attr);
+  
+  
+             struct mq_attr {
+               long mq_flags;       /* Flags (ignored for mq_open()) */
+               long mq_maxmsg;      /* Max. # of messages on queue */
+               long mq_msgsize;     /* Max. message size (bytes) */
+               long mq_curmsgs;     /* # of messages currently in queue
+                                       (ignored for mq_open()) */
+           };
+           
+      The fields of the struct mq_attr pointed to attr specify 
+      -	the maximum number of messages  and
+      -	the  maximum  size of messages that the queue will allow.
+      
+  int mq_send(mqd_t mqdes, const char *msg_ptr,size_t msg_len, unsigned int msg_prio);
+  
+     - When a message is sent to a message queue using the mq_send() function, the priority of the message is specified as an argument.
+     - in mq_send we only set priority for message and place in queue; 
+     
+  ssize_t mq_receive(mqd_t mqdes, char *msg_ptr,size_t msg_len, unsigned int *msg_prio);
+     - mq_recvieve will receive the highest prioriy message in queue, that priority number also collected in one of argument;
+     
+     
+ ---------------------------------
+
+in message queue where the highest priority message is kept? in head or tail? how messages are filled in message queue based on priority?
+
+  -- In a POSIX message queue, the message with the highest priority is kept at the front of the queue, which is the head of the queue. 
+     This means that when a message is retrieved from the queue using mq_receive(), the message with the highest priority is the first 
+     one to be retrieved.
+     
+  -- When a message is sent to a message queue using mq_send(), the message is inserted into the queue based on its priority value. 
+     Specifically, messages with a higher priority value are inserted closer to the front of the queue (i.e., at the head of the queue),
+     while messages with a lower priority value are inserted closer to the end of the queue (i.e., at the tail of the queue).
+     
+______________________________________________________________________________________________
+
+ blocking of pipe and messagequeues are avoided by O_NONBLOCK flag;
+ 
+ ____________________________________________________________________________
+ 
+ advnatages of messagequeues over pipes?
+ 
+ Message prioritization: POSIX message queues support message prioritization, which means that higher-priority messages 
+ can be processed before lower-priority messages. Named pipes do not have this feature and treat all data as equal.
+ 
+ Concurrency: POSIX message queues can be used by multiple processes simultaneously, whereas named pipes are limited to 
+ one reader and one writer at a time.
+     
+     
+   
+      
+      
+      
+           
+           
+           
+  
+  
+  
+  

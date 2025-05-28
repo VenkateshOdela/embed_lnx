@@ -1,0 +1,106 @@
+TCP (Transmission Control Protocol) 
+and UDP (User Datagram Protocol) are two of the most commonly used protocols for transmitting data over a network.
+
+TCP :
+	-	TCP is a reliable, 'stream-oriented' protocol that provides a guaranteed delivery of data. 
+	
+	-	TCP Connection oriented protocol
+	
+	-	It is used when it is important that data is received in the order in which it was sent and that all data is received. 
+		-	Examples of applications that use TCP include email, file transfer, and web browsing.
+	
+	-	Transmission and acknowledgments for each packet,hence less speed;
+	
+
+UDP :
+
+	-	UDP is an unreliable, 'datagram-oriented' protocol that does not guarantee the delivery of data.
+	
+	-	UDP is connection less protocol.
+	
+	-	It is used when speed is more important than reliability, such as in online gaming or video streaming.
+	
+	-   no acknowledgment to each packet, hence more speed;
+
+In summary, 
+
+choose TCP when:
+
+	-	Guaranteed delivery is important
+	-	Data must be received in the order it was sent.
+	-	The application requires reliable data transmission
+
+Choose UDP when:
+
+	-	Speed is more important than reliability.
+	-	The application can handle lost or out-of-order packets
+	-	The application requires fast, low-overhead data transmission.
+-----------------------------------------------------------------------------------------
+
+Sure! Here are some additional examples of when to choose TCP or UDP:
+
+TCP:
+
+	HTTP and HTTPS web traffic
+	SMTP (Simple Mail Transfer Protocol) for email
+	FTP (File Transfer Protocol) for transferring files
+	Telnet for remote terminal connections
+	SSH (Secure Shell) for secure remote login
+	
+UDP:
+
+	DNS (Domain Name System) queries
+	DHCP (Dynamic Host Configuration Protocol) for network configuration
+	SNMP (Simple Network Management Protocol) for network management
+	RTP (Real-Time Transport Protocol) for audio and video streaming
+	VoIP (Voice over Internet Protocol) for voice and video calls
+__________________________________________________________________________________________________________________________________-
+
+
+in udp if it does not guaranty the delivery of data.? how it can be overcome while using udp?
+
+	-	In UDP, there is no guarantee of data delivery, but this doesn't mean that data will be lost all the time. 
+	
+	-	In some cases, data may still be delivered successfully despite the lack of guarantees.
+	
+	-	However, applications that require reliable delivery of data need to implement their own mechanisms to ensure the delivery of data, 
+		rather than relying on the underlying protocol.
+	
+		-	One way to overcome the lack of guaranteed delivery in UDP is to implement error detection and correction mechanisms at the application layer. 
+			-	For example, you can use checksums or error-detecting codes to detect and correct errors in the data being transmitted.
+	
+	-	Another way to improve reliability in UDP is to implement a retransmission mechanism. 
+		-	If the recipient does not receive a packet, it can request a retransmission of the packet from the sender. 
+		-	This approach is similar to the way that TCP operates, but it requires more work to be done at the application layer.
+___________________________________________________________________________________________________________________________________
+
+when sendto() ans sendmsg() system calls used in udp ? could you please explain with examples?
+
+	-	sendto() and sendmsg() are system calls used in the User Datagram Protocol (UDP) for transmitting data to a remote host.
+	
+	-	sendto() is used to send a message to a specific destination address and port.
+	
+	-	sendmsg() allows you to specify multiple destination addresses, to which the same message is sent, and 
+		is typically used for implementing multicast or broadcast.
+
+_______________________________________________________________________________________________________________________________________________________________
+
+___________________________________________________________________________________________________________________________
+ 
+  TCP 
+  -	three - way hand shake;
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+

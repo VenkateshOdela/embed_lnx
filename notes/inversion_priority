@@ -1,0 +1,5 @@
+1.Priority Inversion :
+ * Priority inversion is a bug that occurs when a high priority task is indirectly 
+   preempted by a low priority task. 
+ * For example, the low priority task holds a mutex that the high priority task 
+   must wait for to continue executing.

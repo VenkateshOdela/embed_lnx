@@ -1,0 +1,22 @@
+
+Function overloading VS Function overriding :
+
+-	Function overloading is used when we want multiple functions providing a similar implementation.
+-	Function Overloading happens in the same class when we declare same functions with different arguments in the same class.
+-	Overloading happens at the compile time thats why it is also known as 'compile time polymorphism'.
+-	Function overloading we can have any number of overloaded functions.
+
+
+-	Function overriding is used when we want to add some additional functionality on top of base class implementation.
+-	Function Overriding is happens in the child class when child class overrides parent class function.
+-	Function overriding happens at run time which is why it is known as 'run time polymorphism'.
+-	Function overriding we can have only one overriding function in the child class. 
+
+
+Access Specfifiers :
+
+	public:
+	
+	private:
+	
+	protected:

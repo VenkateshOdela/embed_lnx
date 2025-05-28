@@ -1,0 +1,150 @@
+- Linux,their internals are open for all to view. unlike windows.
+
+- Advantage of Linux :
+ 	-	Linux as the ability to extend at runtime. 
+ 	-   This means that you can add functionality to the kernel
+        (and remove functionality as well) while the system is up and running.
+        
+ - Lodable kernel module
+ 	-	Each piece of code that can be added to the kernel at runtime is called a module.
+ 	-	Each module is made up of object code(not linked into a complete executable) that 
+ 	    can be dynamically linked to the running kernel by the insmod program and can be unlinked by the rmmod program.
+ 	    -	insmod
+ 	    -	rmmod
+ 	
+ 	
+ - Classes of Device and Modules
+ 	-	The Linux way of looking at devices distinguishes between three fundamental device types.
+ 	 	-	1.Characterr Devices/MOdule
+ 	 	-	2.block Device/Module
+ 	 	-	3.network Device/Module
+ 	
+ 	- 1.Character Devices :
+ 		-	A character (char) device is one that can be accessed as a stream of bytes (like a
+			file); a char driver is in charge of implementing this behavior. 
+		-	Such a driver usually implements at least the open, close, read, and write system calls.
+		-	The text console (/dev/console) and the serial ports (/dev/ttyS0 and friends) are examples
+			of char devices, as they are well represented by the stream abstraction.		
+			-	/dev/console
+			-	/dev/ttyS0
+		-   Char devices are accessed by means of filesystem nodes, such as /dev/tty1 and /dev/lp0.
+		    -	/dev/tty1
+		    -	/dev/lp0
+		
+			Note: 
+			The only relevant difference between a char device and a regular file is that you
+			can always move back and forth in the regular file, whereas most char devices
+			are just data channels, which you can only access sequentially. There exist,
+			nonetheless, char devices that look like data areas, and you can move back and
+			forth in them; for instance, this usually applies to frame grabbers, where the
+			applications can access the whole acquired image using mmap or lseek.
+			
+		-	Examples : RTC, keyboard , sensors. 
+			
+	- 2.Block devices :
+		-	Like char devices, block devices are accessed by filesystem nodes in the /dev directory. 
+		-	A block device is a device (e.g., a disk) that can host a filesystem. 
+		-	In most Unix systems, a block device can only handle I/O operations that transfer
+			one or more whole blocks, which are usually 512 bytes (or a larger power of
+			two) bytes in length. 
+		-	Linux, instead, allows the application to read and write a block device like a 
+		    char device—it permits the transfer of any number of bytes at a time. 
+		    
+		-	As a result, block and char devices differ only in the way data is managed
+		internally by the kernel, and thus in the kernel/driver software interface. Like a
+		char device, each block device is accessed through a filesystem node, and the dif-
+		ference between them is transparent to the user. Block drivers have a completely
+		different interface to the kernel than char drivers.
+		
+		-	Example : storage devices : sdmmc, eeprom, flash, harddisk.
+		
+	 - 3. Network interfaces :
+	   - 	Not being a stream-oriented device, a network interface isn’t easily mapped to a
+			node in the filesystem, as /dev/tty1 is. 
+	   -	The Unix way to provide access to interfaces is still by assigning a unique name to them (such as eth0 ),
+	        but that name doesn’t have a corresponding entry in the filesystem. 
+	   -	Communication between the kernel and a network device driver is completely different from that used
+			with char and block drivers. 
+	   -	Instead of read and write, the kernel calls functions related to packet transmission.
+	   -	Examples : ethernet,wifi,bluetooth.
+ 
+ ________________________________________________________________________________________________________________________________________________________________
+ 
+   - Writing MOdules:
+    
+     -	#include <linux/module.h>
+		#include <linux/init.h>
+		
+   	 -	module_init()
+   	 -	module_exit()
+   	 
+   	 -  insmod ./hello.ko
+   	 -  rmmod hello
+   	 
+   	 - 	log messages
+   	    -	/var/log/messages
+   	 
+   	 -  the following statement prints the process ID and the command name of the current
+        process by accessing certain fields in struct task_struct :
+			- 	printk(KERN_INFO "The process is \"%s\" (pid %i)\n",current->comm, current->pid);
+   	    
+   	 -	modprobe :
+   	         - modprobe, like insmod, loads a module into the kernel.
+   	           It differs in that it will look at the module to be loaded to see whether it references any symbols 
+   	           that are not currently defined in the kernel. 
+   	         - If any such references are found, modprobe looks for other modules in the current module search path that 
+   	           define the relevant symbols. When modprobe finds those modules (which are needed by the module being loaded), 
+   	           it loads them into the kernel as well.
+             - If you use insmod in this situation instead, the command fails with an “unresolved symbols” message left in the system logfile.
+   	         
+   	         - As we described earlier, modprobe functions in much the same way as insmod, but it also
+			   loads any other modules that are required by the module you want to load.
+   	 - lsmod :
+   	 		- The lsmod program produces a list of the modules currently loaded in the kernel.
+			   Some other information, such as any other modules making use of a specific module, is also provided. 
+		    - lsmod works by reading the /proc/modules virtual file. 
+			   Informa-tion on currently loaded modules can also be found in the sysfs virtual filesystem under /sys/module.
+   	    
+   	 - Kernel Symbol Table :
+   	        -	The table contains the addresses of global kernel items—functions and variables—that are needed to 
+   	            implement modularized drivers.
+   	            
+   	        -	If your module needs to export symbols for other modules to use, the following macros should be used.
+					-	EXPORT_SYMBOL(name);
+					-	EXPORT_SYMBOL_GPL(name);
+					
+					-	Either of the above macros makes the given symbol available outside the module.
+						The _GPL version makes the symbol available to GPL-licensed modules only.
+					
+	  - Module Parameters:
+	        -	insmod hello howmany=10 whom="Mom"	
+	        
+	  - struct task_struct *current;
+		The current process.
+		
+			current->pid
+			current->comm
+			The process ID and command name for the current process.
+			
+	  - /sys/module
+		/proc/modules
+		
+			-	/sys/module is a sysfs directory hierarchy containing information on currently-loaded modules. 
+			-	/proc/modules is the older, single-file version of that information. 
+				Entries contain the module name, the amount of memory each module
+				occupies, and the usage count. Extra strings are appended to each line to specify
+				flags that are currently active for the module.
+_________________________________________________________________________________________________________________________________________________________________				
+
+   	   
+   	   
+   	   
+   	   
+   	   
+   	   
+   	   
+   	   
+   	   
+   	   
+   	   
+   	   

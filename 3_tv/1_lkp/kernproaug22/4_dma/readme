@@ -1,0 +1,57 @@
+
+What Does Direct Memory Access (DMA) Mean?
+-	Direct memory access (DMA) is a method that allows an input/output (I/O) device 
+    to send or receive data directly to or from the main memory(RAM), bypassing the CPU to 
+  	speed up memory operations.
+
+-	The process is managed by a chip known as a DMA controller (DMAC).
+
+
+DMA
+ -- dma is capability of device to access the physical RAM
+ 
+ 
+ -- | CPU Core |<-->|Memory Controller|<-->|Device| (device example :PCIe USB)
+                            |
+                            |
+                         |Memory|    
+                         
+ -- with additional device DMA engine , the devices are capable of using memory;
+ -- DMA ENGINE circuit , DMA transfer
+ -- CPU is in IDLE when DMA Transfer in progress
+ -- DMA is in IDLE when  CPU operations is in progress.(DMA request and Ackno
+ 
+ -- when cpu in idle - when cpu perform other operations also require access to memory
+ --
+ -- DMA Request for system bus if cpu acknowledge then , DMA is now read to access the memory, otherwise no access to RAM
+ 
+ -- DMA by itself is not a bus, it is circuit;
+ 
+    -- writing driver to device(n/w controller).
+    -- DMA Transfer data(packet) to device(n/w controller)
+       --steps:
+         --cpu core
+           -- allocate apropriate memory
+           -- caching 
+           -- populate data into memory
+           -- configure dma
+           
+     -- cache coherent interconnect
+     
+     -- DMA Address = Bus Addres
+     
+     -- a device dma driver involved
+         - how many cache that cpu have
+         - is hw cache is chorent support.
+         - is iommu present or not
+         
+          - then which api to use?
+          
+          
+   -- system memory  - io MMU   - DMA controller
+     
+      --if DMA supports 32 bit address, how many address io MMU SHOULD ABLE TO TRANSLATE 4GB;
+     
+                            
+                      
+ 

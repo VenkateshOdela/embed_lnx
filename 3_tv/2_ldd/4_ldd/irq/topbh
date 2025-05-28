@@ -1,0 +1,27 @@
+tasklet()
+{
+
+	step 1: gather data
+
+	spin_lock(&lck);
+
+	step 2: log data into driver buffer
+
+	spin_unlock(&lck);
+}
+
+
+drv_read()
+{
+ 	...
+	...
+	...
+	spin_lock_irqsave(&lck);
+
+	step x: Transfer data from driver buffer to user	
+
+	spin_unlock_irqrestore(&lck);
+
+	...
+	...
+}

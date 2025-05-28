@@ -1,0 +1,32 @@
+# kbuild part of makefile
+ifneq ($(KERNELRELEASE),)
+obj-m :=  hello.o
+else
+
+KDIR ?= /lib/modules/$(shell uname -r)/build
+PWD := $(shell pwd)
+
+# CONFIG_MODULE_SIG=n
+# command to convert input files into desired target 
+# this command uses kbuild scripts of kernel-header/source folder specified
+build:
+	$(MAKE) -C $(KDIR) M=$(PWD) modules
+
+clean:
+	$(MAKE) -C $(KDIR) M=$(PWD) clean
+
+endif
+
+# check KERNELRELEASE when Kbuild file is invoked; but How?
+# When Kbuild Makefile is executing, M=$PWD plays major role
+#  - again this commandline Makefile is taken as input and check KERNELRELEASE
+#  - and KERNELRELEASE exists and else case is not executed; conditional compilation
+# 'modules is one target in Kbuild Makefile
+# 'clean' is one target in Kbuild Makefile
+#
+#
+#
+#
+#
+#
+#

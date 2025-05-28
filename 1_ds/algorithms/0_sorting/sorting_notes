@@ -1,0 +1,23 @@
+
+1.selection sort.
+2.bubble sort.
+3.insertion sort.
+4.merge sort.
+5.quick sort.
+6.heap sort.
+
+
+1.Selection Sort :
+  - Selection sort finds the smallest element in the array and 
+  - place it on the first place on the list, 
+  - then it finds the second smallest element in the array and place it on the second place. 
+  - This process continues until all the elements are moved to their correct ordering. 
+    It carries running time O(n2) which is worst than insertion sort.
+    
+2.bubble sort :
+  - It is the simplest sort method which performs sorting by repeatedly moving the largest element to the highest index of the array. 
+    It comprises of comparing each element to its adjacent element and replace them accordingly.
+    
+ 3.insertion sort :
+  - As the name suggests, insertion sort inserts each element of the array to its proper place. 
+    It is a very simple sort method which is used to arrange the deck of cards while playing bridge.

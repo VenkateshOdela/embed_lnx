@@ -1,0 +1,144 @@
+ - in build-qemuarm
+ 		- /tmp
+ 		- /tmp/deploy/images
+ 		- /tmp/deploy/images/core-image-minimal-qemuarm.manifest
+ 		
+  - rpm : redhat package manager.
+     - know .rpm vs .ipk
+     - .ipk in carrier.
+  
+  - .bb Header
+      - Description
+      - homapage
+      - sectoin
+      - license
+      - License File CHecksum
+      
+      
+      - Source Location
+      		- SRC_URI=
+      		   - https://
+      		   - git://
+      		   - svn://
+      		   - ftp://
+      		   
+      - DEPENDS =
+        RDEPENDS
+          - runtime depends
+          
+                   
+      - Tasks
+        - do_fetch
+        - do_unpack
+        - do_patch
+        - do_configure
+        - do_compile
+        - do_install
+        - do_package
+        - do_rootfs
+        
+        
+       - Inherit
+       
+       NOte: do not add or change existing layers.
+       
+_______________________________________________________________________________
+
+ 0. source to build directory before executing bit-bake-layers command
+ 
+ 1.Create new layer(meta-techveda) in poky.
+    $bitbake-layers  create-layer /home/user/tv_yocto/poky/meta-techveda
+ 
+ 2. $bitbake-layers  add-layer /home/user/tv_yocto/poky/meta-techveda   
+ 
+ 3. bitbake-layers show-layers
+ 
+ 4. bitbake myhello
+ 
+ 5. go to buil directory : update local.conf
+      - IMAGE_INSTALL:append =" myhello"
+      
+ 6. bitbake core-image-minimal
+ 
+ 7 . runqemu core-image-minimal
+ 
+ 8.
+    
+    - user@ubuntu:~/tv_yocto/poky/meta-techveda$ tree -L 3
+				.
+				├── conf
+				│   └── layer.conf
+				├── COPYING.MIT
+				├── README
+				└── recipes-example
+				    └── example
+				        └── example_0.1.bb
+    
+    - user@ubuntu:~/tv_yocto/poky/meta$ md5sum COPYING.MIT 
+		3da9cfbcb788c80a0384361b4de20420  COPYING.MIT
+		
+    - S = "${WORKDIR}" is /tmp/work
+    
+    - install -d ${D}${bindir}  d is destination directory ,bindir /bin/
+    
+    - place myhello package files in recipes-example folder only.
+      user@ubuntu:~/tv_yocto/poky/meta-techveda$ tree
+			.
+			├── conf
+			│   └── layer.conf
+			├── COPYING.MIT
+			├── README
+			└── recipes-example
+			    ├── example
+			    │   └── example_0.1.bb
+			    └── myhello
+			        ├── files
+			        │   └── myhello.c
+			        └── myhello.bb
+      
+      - user@ubuntu:~/tv_yocto/build-qemuarm$ bitbake-layers show-layers
+			NOTE: Starting bitbake server...
+			layer                 path                                      priority
+			==========================================================================
+			meta                  /home/user/tv_yocto/poky/meta             5
+			meta-poky             /home/user/tv_yocto/poky/meta-poky        5
+			meta-yocto-bsp        /home/user/tv_yocto/poky/meta-yocto-bsp   5
+			meta-techveda         /home/user/tv_yocto/poky/meta-techveda    6
+      
+	- bitbake myhello
+	
+	 - user@ubuntu:~/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi$ ls myhello/
+       1.0-r1
+	 
+	 - where is image?
+	   user@ubuntu:~/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi/myhello/1.0-r1$ tree imageimage
+		└── usr
+		    └── bin
+		        └── myhello
+		        
+     - user@ubuntu:~/tv_yocto/build-qemuarm/tmp/deploy/images/qemuarm$ cat core-image-minimal-qemuarm.manifest | grep myhello
+       myhello armv7vet2hf_neon 1.0
+       
+       
+     - root@qemuarm:/usr/bin# ls -l | grep myhello 
+		-rwxr-xr-x    1 root     root          5508 Mar  9  2018 myhello
+		root@qemuarm:/usr/bin# ./myhello 
+		hello yocto venkatesh Odela
+		
+		
+user@ubuntu:~/tv_yocto/build-qemuarm/tmp/work/armv7vet2hf-neon-poky-linux-gnueabi/myhello/1.0-r1/package$ tree
+.
+└── usr
+    └── bin
+        └── myhello
+
+2 directories, 1 file
+
+		
+		
+     
+
+
+	   
+		
+______________________________________________________________________________________-

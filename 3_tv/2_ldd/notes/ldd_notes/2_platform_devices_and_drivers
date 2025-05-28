@@ -1,0 +1,152 @@
+
+PLATFORM DEVICES AND DRIVERS
+
+	• Platform bus
+	• Platform devices
+	• Platform drivers
+	
+	Bus
+		-	In computer science, a bus is a collection of electrical wirings which
+			transfers information (data or address or control ) between devices.
+	
+   	   - platfom devices / non-discoverable devices
+   	   	  	- example : RTC, temp sensor, gps
+   	   
+   	   - self discoverbale devices:
+   	   		- example: keyboard, usb
+   	   		
+   	   		
+   	Discovery of devices :
+		• Every device has its configuration data and resources, which need to be reported to the OS,
+		  which is running on the computer system.
+		• An operating system such as Windows or Linux, running on the computer, can auto-discover
+		  these data. Thus the OS learn about the connected devices automatically (Device
+		  enumeration )
+		• Enumeration is a process through which the OS can inquire and receive information, such as
+		  the type of the device, the manufacturer, device configuration, and all the devices connected
+		  to a given bus.
+		• Once the OS gathers information about a device, it can autoload the appropriate driver for
+		  the device. In the PC scenario, buses like PCI and USB support auto enumeration/hotplugging
+		  of devices.
+		• However, on embedded system platforms, this may not be the case since most peripherals
+		  are connected to the CPU over buses that don’t support auto-discovery or enumeration of
+		  devices. We call them as 'platform devices'.
+		• All these platform devices which are non-discoverable by nature, but they must be part of the
+		  Linux device model, so the information about these devices must be fed to the Linux kernel
+		  manually either at compile time or at boot time of the kernel.
+		  
+		  
+	Adding Platform devices information to the kernel
+		• During compilation of kernel
+			• Static method
+			• Hardware details are part of kernel files (board file , drivers)
+		    • Deprecated and not recommended
+		• Loading dynamically
+			• As a kernel module
+			• Not recommended
+		• During kernel boot
+			• Device tree blob
+			• Latest and recommended
+			
+			
+	Platform devices :
+        - a device which is not self enumerated by OS is called platform device.
+        
+	Platform driver :
+		• A driver who is in charge of handling a platform device is called a platform driver.
+		
+		
+		platform drivers onchip :
+		-	SPI,I2C,USB OTG,CAN,MMC,UART
+					  
+		 
+    -	platform core subsytem :
+    	-	Device is represented as an instance of 'struct platform_device'
+    	-	Driver is represented as an instance of 'struct platform_driver'
+    	-	Bus is represented as an instance of 'struct platform_bus'
+    	
+    -	USB Device subsytem
+    	-	each USB Device is represented as an instance of 'struct usb_device'
+    	-	each registered Driver is represented as an instance of 'struct usb_driver'
+    	-	each physical usb Bus is represented as an instance of 'struct usb_bus'	
+    	
+    -	PCI Device subsytem
+    	-	each PCI Device is represented as an instance of 'struct pci_device'
+    	-	each registered Driver is represented as an instance of 'struct pci_driver'
+    	-	each physical pci Bus is represented as an instance of 'struct pci_bus'		    	
+	
+   -	i2c Device subsytem
+    	-	each i2c Device is represented as an instance of 'struct i2c_client'
+    	-	each registered Driver is represented as an instance of 'struct i2c_driver'
+    	-	each physical i2c Bus is represented as an instance of 'struct i2c_bus'	
+    	
+   -	hotplug subsytem
+    	-	each Device is represented as an instance of 'struct device'
+    	-	each  Driver is represented as an instance of 'struct driver'
+    	-	each Bus is represented as an instance of 'struct bus'	
+ 
+ 	-	-	platform device structure :
+			-	struct platform_device {
+					      const char      *name;
+					      u32             id;
+					      struct device   dev;
+					      u32             num_resources;
+					      struct resource *resource;
+					};
+					   	
+   -	Platform driver structure :
+			-	struct platform_driver {
+			      int (*probe)(struct platform_device *);
+			      int (*remove)(struct platform_device *);
+			      void (*shutdown)(struct platform_device *);
+			      int (*suspend)(struct platform_device *, pm_message_t state);
+			      int (*suspend_late)(struct platform_device *, pm_message_t state);
+			      int (*resume_early)(struct platform_device *);
+			      int (*resume)(struct platform_device *);
+			      struct device_driver driver;
+			};
+			
+		-	platform_driver_register()
+		-	platforn_device_register()
+		
+		-	Points to remember
+			• Whenever a new device or a new driver is added, the matching
+				function of the platform bus runs, and if it finds a matching platform
+				device for a platform driver, the probe function of the matched driver
+				will get called. Inside the probe function, the driver configures the
+				detected device.
+			• Details of the matched platform device will be passed to the probe
+				function of the matched driver so that driver can extract the platform
+				data and configure it.
+				
+				
+		-	Probe function of the platform driver :
+				• Probe function must be implemented by the platform driver and should be registered during
+				  platform_driver_register().
+				  
+				• When the bus matching function detects the matching device and driver, probe function of the driver
+				  gets called with detected platform device as an input argument.
+				  
+				• Note that probe() should in general, verify that the specified device hardware actually exists.
+				  Sometimes platform setup code can't be sure. The probing can use device resources, including clocks,
+				  and device platform_data.
+					• The the probe function is responsible for :
+						• Device detection and initialization
+						• Allocation of memories for various data structures,
+						• Mapping i/o memory
+						• Registering interrupt handlers
+						• Registering device to kernel framework, user level access point creations, etc
+							
+				• The probe may return 0(Success) or error code. If probe function returns a non-zero value, meaning
+					probing of a device has failed.
+					
+		-	Remove function of the platform driver :
+			• Remove function gets called when a platform device is removed from
+			  the kernel to unbind a device from the driver or when the kernel no
+			  longer uses the platform device
+			• Remove function is responsible for
+				• Unregistering the device from the kernel framework
+				• Free memory if allocated on behalf of a device
+				• Shutdown/De-initialize the device
+								
+			

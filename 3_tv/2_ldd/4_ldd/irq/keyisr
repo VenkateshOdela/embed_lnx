@@ -1,0 +1,9 @@
+keyisr()
+{
+	1. read scan code	
+	2. validate
+	3. convert to key code
+	4. pass keycode to terminal layer
+
+}
+

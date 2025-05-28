@@ -1,0 +1,30 @@
+1. mmtest.c
+  -- sizeof(struct page)
+  -- get_num_physpages()
+  -- kmalloc()
+  -- kfree()
+  
+ 2. palloc.c
+   -- alloc_page()
+   -- alloc_pages(,)
+   -- page_address()
+   -- PAGE_SIZE
+   -- page_to_pfn()
+   -- pfn_to_page()
+   -- free_page
+   
+ 3. palloc1.c
+   --__get_free_page
+   
+ 4. pagemaxc
+   -- checking maximum allocation 8MB of contiguous memory with alloc_pages(GFP_KERNEL, nop);
+   
+ 1. slabtest.c
+ 
+ 2. slabmax.c
+ 
+ 3. kmem_cache.c
+ 
+ 4. mycache.c
+   
+  

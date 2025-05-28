@@ -1,0 +1,5 @@
+
+Code Optimization Techniques( Saving Memory) :
+	1. Using Bit Fields;
+	     - avoiding unnecessary extra bytes for struture data members;
+	     - 

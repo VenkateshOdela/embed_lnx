@@ -1,0 +1,112 @@
+
+
+Job Description :
+
+-	solid knowledge of camera processing pipeline and modules.
+-	working knowledge on camera design, imaging modules, subsystems pipeline and architecture.
+
+___________________________________________________________________________________________________________________
+
+Camera Processing Pipeline :
+
+	-	The camera processing pipeline is a sequence of processing steps that convert the raw data 
+		captured by the camera sensor into a usable image or video.
+		
+	-	The camera processing pipeline consists of below stages, 
+		-	sensor data processing, 
+		-	image signal processing, 
+		-	compression, and 
+		-	storage.
+ 
+    - Sensor Data Processing:
+     
+      -	The first stage of the pipeline involves processing the raw data captured by the camera sensor. 
+        The data is often in the form of a Bayer pattern, which is a grid of red, green, and blue color filters. 
+        The sensor data processing stage performs operations such as white balance, color correction, and 
+        demosaicing to convert the raw data into a usable format.
+        
+      - Bayer pattern is a color filter array that is commonly used in digital camera sensors. 
+        The Bayer pattern consists of a grid of pixels with alternating red, green, and blue color filters arranged 
+        in a specific pattern.
+        
+      - Each pixel in the Bayer pattern can only capture information about one color, either red, green, or blue. 
+        The other two colors are interpolated using neighboring pixels that have color information for those colors. 
+        This process is called demosaicing, and it's a crucial step in the camera processing pipeline.
+        
+      - Overall, demosaicing is a crucial step in the camera processing pipeline as it allows us to recover 
+        missing color information and produce a high-quality, full-color image from a Bayer pattern image.
+        
+      - For example, in a region of an image where there are mainly red pixels, 
+        the demosaicing algorithm can use neighboring red pixels to estimate the missing green and blue values. 
+        Similarly, in a region where there are mainly blue pixels, 
+        the algorithm can use neighboring blue pixels to estimate the missing red and green values.
+     
+     - Image signal processing:
+     
+      - The next stage of the pipeline involves processing the image data to improve its quality. 
+        This includes operations such as noise reduction, sharpening, and contrast adjustment. 
+        Image signal processing is also where features like autofocus and image stabilization are implemented.
+        
+     - Compression: 
+     
+      - Once the image data has been processed, it may need to be compressed to save storage space. 
+        There are several compression algorithms that can be used, such as JPEG and HEVC.
+        - JPEG : (Joint Photographic Experts Group) is a widely used image compression standard. 
+        - HEVC : (High Efficiency Video Coding) is a compression standard that is used for compressing video content.
+        
+     - Storage:
+      
+      - The final stage of the pipeline involves storing the processed and compressed image data. 
+        This can be done on the camera itself or transferred to an external storage device.
+______________________________________________________________________________________________________________________________________
+
+Camera Modules :
+-	CCD (Charge-Coupled Device) camera modules.
+-	CMOS (Complementary Metal-Oxide-Semiconductor) camera modules.
+_____________________________________________________________________________________________________________________________________
+
+ - introduction to camera sensor
+ - type of camera sensors
+ - andriod camera architecture
+ -
+ 
+ _________________________________
+ 
+ Video has long been inherent in embedded systems. Given that Linux is the favorite
+kernel used in such systems, it goes without saying that it natively embeds its support
+for video. This is the so-called V4L2, which stands for Video 4 (for) Linux 2
+
+Through this framework, the Linux kernel is able to deal with camera devices and the bridge to
+which they are connected, as well as the associated DMA engines.
+
+__________________________________________________
+
+Cameras can be connected to a computer or other device using a variety of interfaces, including:
+
+USB (Universal Serial Bus): USB is a common interface used for connecting webcams, digital cameras, and other types of cameras to computers. 
+It is a widely available standard interface that is supported by most operating systems.
+
+Ethernet: Some cameras can be connected to a network using Ethernet, which allows them to be accessed remotely over the network.
+
+HDMI (High-Definition Multimedia Interface): HDMI is a high-speed interface used for transmitting audio and video signals between devices. 
+Some cameras support HDMI output, allowing them to be connected directly to a monitor or TV.
+
+SDI (Serial Digital Interface): SDI is a professional video interface used in broadcast and other high-end video applications. 
+Some high-end cameras support SDI output.
+
+MIPI (Mobile Industry Processor Interface): MIPI is a standard interface used in mobile devices and other small form factor devices. 
+Some cameras use MIPI interfaces for high-speed data transfer and power management.
+
+The specific interface used to connect a camera depends on the type of camera and the device it is being connected to.
+_____________________________________________________________________
+
+- preview
+- snapshot
+
+
+
+
+
+        
+           
+      

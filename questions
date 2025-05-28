@@ -1,0 +1,26 @@
+1. What is Implicit Declaration Warning?
+
+2. Create Two Threads to run concurrently, allow it access same critical data,
+   use semtimedwait(),sem_wait(), Declare failure from on thread as semphore is
+   not accessed with define timout(semtimedwait());
+
+  root task , tsm task
+  - both need to use same sempahore lock;
+  - root task hold the lock for long time and release it after some defined time.
+  - tsm task waits for lock till timeout, and should through error;
+
+  - change time out of task task and check is scenario is really reproducing;
+  - use sleep system call to instroduce delay;
+
+3. binary semaphore and counting semaphore;
+
+4. When Message Queues are used?
+
+5. mmap functionality ?
+
+-- race conditions ?
+
+-- time stamp for each , debug message ?;
+
+
+

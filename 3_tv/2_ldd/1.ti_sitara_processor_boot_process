@@ -1,0 +1,23 @@
+Embedded Linux boot process
+
+     Power ON
+        '
+        '
+    Boot ROM Loader(RBL) 		- Excute in Boot ROM of processor. Boot ROM loaders MLO.
+        |
+        |
+    (MLO)(1st Stage) 			- MLO Excute in Internal RAM of Processor - MLO is copied from external memory device.(sdcard/eemc)
+        | 
+        | 
+    Uboot(uboot.image)(2nd Stage) 	- Uboot is copied to External DDR RAM by second stage boot loader. as uboot.image file size is more. 
+        |                  	          Uboot look for file 'uENV.txt'to to change in boot behaviour; 
+        |
+        |
+    Linux Kernel(uImage) 		- Uboot loads kernel and kernel starts excuting;
+
+
+Files in SD card :
+
+ MLO, uboot.image(uENV.txt), uimage, am335x-boneblack.dtb;
+
+

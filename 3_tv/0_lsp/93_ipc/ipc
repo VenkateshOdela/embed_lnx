@@ -1,0 +1,91 @@
+IPC : Inter Process Communication;
+
+-- ipc describes different ways of 'message passing' between different processes in OS.
+
+-- communication b/w process.
+
+-- Communication can be of two types −
+
+   - Between related processes,(such as parent and child processes.)
+
+   - Between unrelated processes, or two or more different processes.
+
+-- ipc types :
+   
+   - Pipes
+   	- un-named pipes
+    - Named pipes(FIF0)
+   - Message Queue
+   - Shared Memory
+   - sockets
+   
+
+   -pipes.
+     - unamed pipes : comm b/w related process only.
+     
+          	NOte: The problem with pipes is that they are usable only between processes that have a common ancestor 
+              (i.e., a parent-child relationship), but this was fixed with the introduction of named pipes or FIFOs.
+     	- popen() pclose()
+     	- read() write()
+     
+     - Named pipes(FIFO): comm b/w related and unrelated process also possible.
+     
+       - mkfifo()
+       - read() write()
+       
+       -  Opening a FIFO for reading normally blocks until some other process opens the same FIFO  for  writing,
+          and vice versa.
+     
+
+
+ 
+   -message queues (comm b/w related and unrelated process)
+   
+       - mqopen()
+       - mqsend()
+       - mqreceive()
+       - mqclose()
+       
+       
+       - messages in a queue.
+           | msg1 | msg2 | msg3 |   --> message queue
+       - attributes :
+       
+          - long mq_maxmsg; // maximum number of messges allowed on queue
+          - long mq_msgsize; // max size of a messages in bytes.
+       
+
+   -shared memory.
+
+   -sockets.
+
+---What is a process? A process is a program in execution.
+
+	-What is a program? A program is a file containing the information of a process and how to build it during run time. 
+	-When you start execution of the program, it is loaded into RAM and starts executing.
+
+-- stack : is LIFO
+
+-- orphan , zombie , daemon :
+
+  - Orphan Process : 
+      - As indicated by the name, orphan implies parentless process.
+      - Parent Process , Child Process
+      - If the parent process terminates before the child process, then
+        child process now is called Orphan Process.
+      - 
+   --https://www.tutorialspoint.com/inter_process_communication/inter_process_communication_other_processes.htm
+   
+ ________________________________________________________________________________ 
+   pipe : process persistent
+   FIFO : process persistent
+   
+   Message Queue : kernel persistent
+   
+   Socket : process persistent
+   
+   process persistent : This ipc exist till process exist
+   kernel persistent : This ipc exist until kernel reboots.
+ __________________________________________________________________________________
+
+

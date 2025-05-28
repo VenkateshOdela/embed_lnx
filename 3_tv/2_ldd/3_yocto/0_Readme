@@ -1,0 +1,24 @@
+Testing recipes
+
+1. Create a custom layer using bitbake-layers tool
+
+      ex: $ bitbake-layers create-layer /<PATH IN HOME DIRECTORY>/meta-<layername>
+
+2. Add custom layers into build using bitake-layers tool
+
+      ex: $bitbake-layers add-layer /<PATH IN HOME DIRECTORY>/meta-<layername>
+	
+3. populate recipe folders into custom layer
+
+	ex: $ cp -r myhello /<PATH IN HOME DIRECTORY>/meta-<layername>/recipes-examples/
+
+4. Initiate recipe build 
+
+    ex:	$bitbake myhello
+
+5. Verify Build in work directory
+
+	$ tree tmp/work/cortexa15t2hf-neon-poky-linux-gnueabi/<machine>/myhello/<package rev>/image
+
+6. To include package in current image using INSTALL_IMAGE:append variable
+

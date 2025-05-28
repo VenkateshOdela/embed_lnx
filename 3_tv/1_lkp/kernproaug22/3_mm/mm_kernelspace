@@ -1,0 +1,495 @@
+-memory subsytem :
+
+--	memory subsystem - deals with RAM(physical Memory management)
+  	-	memory subsytem - not deals with storage devices;
+
+--	file system : deals with storage devices;
+
+-mm- how physical RAM is managed?;
+______________________________________________________________________________
+--Memory Subsystemm Overview :
+   1. high level kernel code 
+   2. low level kernel code (initializations ..)(Arch.. specific)
+  
+  		1. High Level 'mm' kernel code (Processor independent)
+			 $ usr/src/linux/mm
+			 example : /usr/src/linux-hwe-5.4-headers-5.4.0-124/mm
+			 
+			 ex : /home/user/embedded_linux/linux-5.19.5/mm
+			
+			 user@ubuntu:/usr/src/linux-hwe-5.4-headers-5.4.0-124/mm$ uname -r
+			 5.4.0-124-generic
+			 user@ubuntu:/usr/src/linux-hwe-5.4-headers-5.4.0-124/mm$ pwd
+			 /usr/src/linux-hwe-5.4-headers-5.4.0-124/mm
+     
+    
+  		2. Low Level 'mm'kernel code (Processor dependent)
+			 $ usr/src/linux/arch/
+			     |          |           |
+			    i386/mm   ARM/mm      powerpc/mm
+			 example: 
+			 /usr/src/linux-headers-5.4.0-124-generic/arch/arm/mm
+			 
+			 ex: /home/user/embedded_linux/linux-5.19.5/arch/arm
+			   
+			 Note :Architecture Specific mm code;
+_________________________________________________________________________
+   
+linux-headers-5.4.0-124-generic
+linux-hwe-5.4-headers-5.4.0-124
+
+--role of memory subsystem in kernel?
+
+--user address  (virtual address spaces)
+--kernel address
+
+--Memory Initialiser(Low level kernel code) :
+
+  - laptop/PC -> x86-64 -> what does initialization mean?
+  - POR -> board specific bsp code(init..) -> load next piece of software
+    -> Load OS -> into memory.
+  - DRAM initialization / initialization of RAM happening at power on reset.
+   - low level mm kernel code - not dealing with init..
+   - hw initilization -> OS loader 
+   - protected mode operations.
+   - POR -> cpu is initialized and cpu enable in physical mode.
+   - os are designed to operate in virtual adress mode :
+   - MPU(Memory Protection UNit) - advanced mpu ->MMU (memory management unit)
+     -The MPU/MMU circuits are not default in on state, when kernel loads into memory, when
+      low kernel init code runs , MPU/MMU is turned on;
+     MPU and MMU are two different circuits :
+     -> BSP -> 
+     -> CPU
+     -> os requires virtual addressing
+     -> os enable virtual addressing specific circuitry.
+     -> Turn on MPU, transit CPU from physical address mode to virtual address mode.
+         - Low level kernel code is responsible for enabling virtual addressing(MMU);
+   -> before coming to low level code, it was in physical address mode..
+
+--physical address mode 
+_________________________________________________________________________________________________
+-- Memory View :
+
+physical address view to virtual address view :
+
+- 1. processor(cpu) view in real mode
+  - as a single array;
+    - identified  by index
+      - Physical Address = offset
+
+- 2. processor(cpu) view of memory in Protected-mode
+  - As a set of array/vector
+    - size of physical ram? may be in size
+      - MPU/MMU provides configuration option for frame size;
+      - Physical Address = Frame number + offset 
+      - Frame = 4K; for example;
+      - memory is not single of sequence of bytes,Now, Memory is collection Frames;
+      - Number of frames = Size of RAM / Frame Size;
+_____________________________________________________________________________________________________
+To Summarize :
+ -  kernel is built as image,
+ -  when we turn on system(x86 machine), the boot laoder(GRUB)
+ -  The bootloader (GRUB) loads the kernel image into some area of physical ram,
+ -  then it starts start/init function(entry function) of kernel.
+ -  entry function steps into low level kernel code.(kernel bootstrap)
+      - step 1 : enable MPU/MMU circuitry (which translates physical ram into frames);
+      - step 2 : enumarate page descriptor list;
+      - step 3 : construct page frame table- it will list out page to frame mapping.(dynamic).
+      - step 4 : setup zones
+      - step 5 : memory manager allocation(Allocators)
+  - step 6 : Initialize HIgh level mm / allocators.
+______________________________________________________________________________________________________
+-- how do you present physical memory visible to software?
+  
+  -- object oriented programming;
+
+-- kernel physically won't see a frames , So ,datastructure is created. is called 'strcut page'
+    --data structure to represent those frames as pages
+
+     -- page descriptor - is data structure enumarated 
+        -- page descriptors are placed in double linked list.(page list)
+           -- number of nodes = number of pages
+           
+-- 'struct page' holds properties of frame include:
+   --Frame Identifer
+   --current status of frame, is it allocated to some caller or idle
+   -- is it ro or rw
+   -- all these are copied into each page descriptor;
+   
+-- page is representation of frame :
+
+ --when caller requires memory, we pullout page not in use and assign to user;
+ -- caller is communicating via page decriptor
+ 
+ - each page is strcture holding frame of 4K;
+ 
+ - Page descriptor(ds in bytes) of frame(4K)
+ 
+ --'The kernel represents every physical page on the system with a 'struct page' structure'.
+    --This structure is defined in <linux/mm_types.h>
+    
+ -- There is one 'strcut page' object per physical memory page
+    - sizeof(struct page) : 64 Bytes
+    - Assuming 8GB of RAM and 4K-sized pages : 128MB reserved for struct page
+________________________________________________________________________________________________________________
+
+--page descriptor respresting 4K block
+  --  4K block mapped to application.(user space)
+  --  4K block mapped to kernerl driver/service.(kernel space)
+  
+     -- same 4K frame can be either mapped to user space or kernel space;
+     
+        -- simply ,user space , kernel space -> are virtual address
+           
+           -- 4GB RAM, 0 to 3GB address are considers as user space, 3 to 4GB considered as Kernel Space;
+__________________________________________________________________________________________________________
+
+-mmu requires page frame table :
+	
+	page frame table
+	 -- maping between page+offset and frame.no+offset 
+	 
+	    page_descriptor frame
+
+__________________________________________________________________________________________________________
+
+-- top down appraoch
+-- down up approach
+
+-- 8GB(RAM)/4K(FRAME SIZE) = number of Page Descriptors/Pages. = 2MB
+
+-- 4GB(RAM)/4K (FRAME SIZE) = number of Page Descriptors/Pages. = 1MB
+
+-- example : on a machine with 4KB pages and 1GB of memory, 
+             physical memory is divided into 262,144 distinct pages.
+  
+             (1*1024*1024*1024)/(4*1024) = 262,144;
+
+-- vmlinux : RAW Kernel
+-- vmlinuz : Composite Kernel image
+-- zimage  : kernel image for bootloader.
+________________________________________________________________________________________________________
+Memory Manager ( High- Level mm)
+
+-when caller requests frame 
+-Highlevel mm is a set of allocation( of frames) algorithms.
+
+-	The Four Different memory allocation algorithms :
+	-	page
+	-	slab
+	-	Cache
+	-	Fragment
+________________________________________________________
+Low level kernel code :(Further)
+
+--the kernel divides pages into different zones:
+
+Zone : 
+ --Zone descriptors 
+ -- 
+ 
+--Policy For x86_32 bit system(in RAM ranges) : 
+-ZONE_DMA(0-16MB)
+-ZONE_NORMAL(16-896MB)
+-ZONE_HIGHMEM(>896MB)
+
+--Policy For x86_64 bit system(in RAM ranges) :
+-Zone_DMA(0-16MB)
+-Zone_DMA32(16MB-4GB)
+-ZONE_NORMAL(>4GB)
+
+
+Example : 
+	1. 32-bit X86_32 system, with 4GB of RAM,How many zones? 3 Zones (ZONE_DMA, ZONE_NORMAL ,ZONE_HIGHMEM)
+	
+	2. 32-bit X86_32 system, with 512MB of RAM,How many zones? 2 ZOnes (ZONE_DMA,ZONE_NORMAL)
+	
+	3. 64-bit X86_32 system, with 4GB of RAM,How many zones? 2 Zones
+	
+	4. 64-bit X86_32 system, with 16GB of RAM,How many zones? 3 Zones
+
+My Virtual PC, 
+
+1. x86_64 bit system, with 8GB RAM, How Many ZOnes? 3 Zones
+
+user@ubuntu:~$ cat /proc/buddyinfo
+	Node 0, zone      DMA      3      1      1      0      2      1      2      1      2      0      3 
+	Node 0, zone    DMA32    743   1173   2925    472    184    115     49     37     10      0      0 
+	Node 0, zone   Normal    514    323    189    121     26      6      2      1      1      2      0 
+
+
+Why this zones are reserved?
+ ex : DMA operations
+ ex : separating user space zone , kernel space zone;
+ 
+DMA - is hw, giving direct rw access to RAM; 
+ -DMA is capability of device to perform rw on RAM;
+
+i2c controller -> DMA -> RAM possible? 
+ - address bus
+ - data buS
+
+-DMA circuits provide capability to drive address and data bus of CPU; so perform direct rw operation;
+
+cat /proc/zoneinfo
+cat /proc/buddyinfo
+______
+user@ubuntu:~/lkp/kernproaug22/mm$ cat /proc/buddyinfo 
+
+Node 0, zone      DMA      2      3      2      2      1      1      2      1      2      0      3 
+
+Node 0, zone    DMA32  19235   5655   1952   1200    706    120      9      2      0      0      0 
+
+Node 0, zone   Normal    274    364    292    192     26      8      2      0      2      0      0 
+________
+
+Zones are collection of pages.
+
+Zone Manager :
+
+32 GB 
+________________________________________________________________________________________________________
+Buddy Systen is alogorithm 
+low level code : it is initliaze memory manager(alogrithms get activated);
+
+The Four Different memory allocation/Manager algorithms :
+-	Page Allocator 
+-	Slab Allocator
+	-	Cache Allocator
+-	Fragment Allocator
+__________________________________________________________________________________________________
+
+High Level mm code :
+
+Allocators
+-	Page Allocator 
+    -	allocate memory multiples of 4K.
+    -	Draw back: if require 512 bytes allocates 4k and it is wastage of memory.
+    -	allocates contigouous memory.
+    -	alloc_page() is call to page allocator
+    
+-	Slab Allocator
+	-	allocates memory multiples of 8 bytes.( small memory allocation)
+	-	kmalloc is call to slab allocator.
+	-	Advantage : The slab allocator gives the exact amount of memory that has been requested to store an object.	
+	
+-	Cache Allocator
+	-	The slab allocator gives the exact amount of memory that has been requested to store an object.
+
+-	Fragment Allocator
+
+|Cache Allocator|
+      |
+|Slab Allocator|     |Fragment Allocator|  DMA Mapping    CMA
+      |                   |                 |              |
+_____________________________________________________________
+|                  Page Allocator                            |
+|____________________________________________________________|
+                          |
+_______________________________________________________________
+|                    Buddy System                              |
+|______________________________________________________________|
+        |                    |                          |
+    |ZONE_DMA32|		|ZONE_NORMAL|               |ZONE_DEVICE|
+    
+    
+Page Allocator :
+ - page allocator serve contigouous memory;
+ - it can only allocate memory muiltples of page size(4K)
+ - Odd Size  is not taken;(which are not multiples of 4K)
+ - page allocator upto 8MB Size request is possible
+ - size request > 16MB not possible
+ 
+ - alloc_page(gfp_mask)
+   -- gfp_mask Flags 
+      -- Action Modifiers
+      -- Zone Modifiers
+      -- Type Flags
+   
+ Buddy System/Allocator:
+ - breakdown pages of zone to free list 2^11 = 8MB  free list/chunk
+ - request arrived to allocate 4k, it have 8MB free chunck
+ - 8MB/2 = 4MB(LEFT) - 4MB (Right)
+ - compare of left size with request size , if it matched then it will assign
+ - if left size is more than requested, then it further splits;
+ - 4MB/2 = 2MB - 2MB
+ - 2MB/2 = 1MB - 1MB
+ - ..
+ - ..
+ - if left most chunk is keeps on filling as per requested page size;
+ - when memory is released
+ - 4K and 4k forms 8K buddy
+ - 8K and 8K forms 16K buddy
+ - memory splits and merges(buddy)
+ - what is signiface of this buddy system.?
+   - fragmentation(small pieces of memory) is avoided; 
+   - as small pieces of memory forming a buddy, and when requested  gives large contiguous memory;
+   
+ -- Limitation of Page Allocator/Buddy System :
+   -- request for 512 bytes gives 4K memory.(Here,Memory is Wasted);
+   -- only used for large memory allocations.
+ __________________________________________________________________________________________________  
+ 
+ Slab Allocator - extension to page allocator
+ 
+  -- handle small size allocations.
+  -- slab allocator allocates contigouos memory
+  -- slab allocator allocates memory multiples of 8 bytes.
+  -- kmalloc is call to slab allocator.('alloc_page() is call to page allocator').
+  -- we are familiar with kmalloc as most of our allocations are small in size;
+  
+  -- what are common between page and slab allocators?
+     -- both allocates contiguous memory;
+     
+  -- Allocation of General Slab Object :
+     -- #include <linux/slab.h>
+     -- void * kmalloc(size_t size, gfp_t flags)
+        -- size : size of the desired memory in blocks
+        -- flags: GFP_ATOMIC, non-blocking
+                  GFP_KERNEL  may block
+                  GFP_USER    may block
+        -- kmalloc() allocates physically contiguous memory
+        -- gfp : get free pages(abbreviation)
+   
+   --Release of a General Slab Object
+    -- #include <linux/slab.h>
+    -- void kfree(const void *ptr);
+    -- Note :Do not call kfree on memory not previously allocated with kmalloc();
+    
+    char *buf;
+    buf = kmalloc(BUF_SIZE, GFP_ATOMIC);
+    if (!buf)
+        /* error allocating memory ! */
+
+     Later, when you no longer need the memory, do not forget to free it:
+     kfree(buf);
+     
+   -- kcalloc - assign blocks of memory;
+   -- krealloc - resize eexisting assigned memorry
+   -- kzalloc - returns zero initilized memory; kzfree()
+   
+   -- kmalloc slab allocator is called object allocator;
+   
+   -- kmalloc 16 bytes request ? no memory present, then slab allocator expand the memory and allocate
+   
+   -- free banks dynamically allocate and dynamically shrink
+   
+   -- free lists:
+      -- A free list contains a block of available, already allocated, data structures.
+      -- When code requires a new instance of a data structure, it can grab one of the structures
+         off the free list rather than allocate the sufficient amount of memory and set it up for the
+          data structure. 
+      -- Later, when the data structure is no longer needed, it is returned to the free
+         list instead of deallocated.In this sense, the free list acts as an object cache, caching a fre-
+         quently used type of object.
+         
+       --One of the main problems with free lists in the kernel is that there exists no global
+			control.When available memory is low, there is no way for the kernel to communicate
+			to every free list that it should shrink the sizes of its cache to free up memory.The ker-
+			nel has no understanding of the random free lists at all.To remedy this, and to consoli-
+			date code, the Linux kernel provides the slab layer (also called the slab allocator).The slab
+			layer acts as a generic data structure-caching layer.
+
+       -- cache means reserved memory :
+       
+     -- slab cache is seen from sudo cat /proc/slabinfo
+     
+   -- Design of the Slab Layer :
+      -- The slab layer divides different objects into groups called caches, each of which stores a
+         different type of object.
+      -- There is one cache per object type. For example, 
+         one cache is for process descriptors (a free list of task_struct structures),
+         whereas another cache is for inode objects ( struct inode) .
+         
+      -- The caches are then divided into slabs (hence the name of this subsystem).
+         The slabs are composed of one or more physically contiguous pages.
+         Typically, slabs are composed of only a single page. Each cache may consist of multiple slabs.
+         
+      -- Each slab contains some number of objects, which are the data structures being cached.
+         
+         
+                          / |object|
+                         /
+                  |slabs| ---- |object|
+                 /       \
+                /         \ |object|
+               /           
+         |cache|
+               \        
+                \         /|object|
+                 \       /
+                  |slabs|     
+                         \
+                          \|object|
+         
+        -- Each slab is in one of three states: full, partial, or empty.
+           1.A full slab has no free objects. (Allobjects in the slab are allocated.)
+           2.A partial slab has some allocated objects and some free objects.
+           3.An empty slab has no allocated objects. (All objects inthe slab are free.)      
+           
+                         | ----> |full slab|-------> |obj|--->|obj|-->|obj
+                         |
+                         |      |partially|
+           |cache| -----------> |full slab|--------> |obj|-->|obj|
+                         |
+                         |
+                         | ----> |empty slab|------>
+                         
+        -- Whensome part of the kernel requests a new object, the request is satisfied from a partial slab, if
+           one exists. Otherwise, the request is satisfied from an empty slab. If there exists no empty slab, 
+           one is created. Obviously, a full slab can never satisfy a request because it does not
+           have any free objects.This strategy reduces fragmentation.
+      
+        -- cache descriptor contain pointers points to list of slab descriptors
+        
+     -- Benefits of Slabs : 
+        - No(internal) fragmentation. The slab allocator gives the exact amount of memory
+          that has been requested to store an object.
+   
+   -- Slob  Allocator :
+      - choose variant of slob allocator
+      
+   -- SLAB Allocator 
+      - SLAB                          -- choose for single core CPu
+      - SLUB (UNqueued Allocator)     -- choose for many core cpu
+      - SLOB (Simple Allocator)       -- choose for deep embed device /memory constrain device
+      
+    -- Cache Allocator
+       -- Cache Allocator allocate any custom size pre-allocations.
+       -- slab cache can setup private cache it can be object cache and memory cache.
+       -- taken care by slab allocator
+ _________________________________________________________________________________________________________________     
+      
+    
+    https://www.kernel.org/doc/gorman/html/understand/understand001.html
+    
+    
+
+    
+    
+    
+    
+   
+   
+   
+   
+   
+   
+  
+ 
+ 
+ 
+
+
+
+
+  
+      
+
+
+
+
+     
+
+
+

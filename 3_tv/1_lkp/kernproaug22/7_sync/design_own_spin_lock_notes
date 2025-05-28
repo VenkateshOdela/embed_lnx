@@ -1,0 +1,69 @@
+
+-	Design Own Spinlock
+
+	-	'the test-and-set' instruction is an instruction used to write (set) 1 to a memory location 
+		and return its old value as a single atomic (i.e., non-interruptible) operation.
+		
+	-	The caller can then "test" the result to see if the state was changed by the call.
+	
+	-	If multiple processes may access the same memory location, and if a process is currently performing a test-and-set, 
+		no other process may begin another test-and-set until the first process's test-and-set is finished.
+		
+_____________________________________________________________________________________________________________________________________		
+		
+-	A lock can be built using an atomic test-and-set[1] instruction as follows:
+
+	-	This code assumes that the memory location was initialized to 0 at some point prior to the first test-and-set.
+	
+	-	The calling process obtains the lock if the old value was 0, otherwise the while-loop spins waiting to acquire the lock. 
+		This is called a spinlock. 
+		
+	-	At any point, the holder of the lock can simply set the memory location back to 0 to release the lock for acquisition by 
+		another (--this does not require any special handling as the holder "owns" this memory location.)
+		
+______________________________________________________________________________________________________________________________________
+
+-	software implementation of spinlocks:
+
+
+	volatile int lock = 0;
+	
+	boolean test_and_set(boolean* lockPtr) 
+	{
+		int oldValue = *lockPtr;
+		*lockPtr = TRUE;   // write one to memory location
+		return oldValue;   // returns it's old value.
+    }
+    
+    
+    
+    //******* thread 1 *****************//
+    
+    while(1)
+    {
+        //trying to acquire lock
+    	while(test_and_set(&lock);
+    	
+    	// critical section
+    	
+    	lock = FALSE; // releasing lock
+    
+	}
+	
+	
+	//******* thread 2 *****************//
+    
+    while(1)
+    {   //trying to acquire lock
+    	while(test_and_set(&lock);
+    	
+    	// critical section
+    	
+    	lock = FALSE; // releasing lock
+    
+	}
+___________________________________________________________________________________________________________
+
+
+
+_____________________________________

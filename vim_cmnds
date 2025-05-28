@@ -1,0 +1,36 @@
+-- cscope 
+-- ctags
+
+-- cscope -R
+-- ctags -R
+
+i - press i to insert text mode
+
+esc - press esc key to come out of insert mode.
+
+
+:w! save and dont' quit
+:wq save and quit;
+:wq!
+
+:q! quit without saving;
+:q
+
+Ctrl + ] --> to open declaration of function;
+
+Ctrl + o --> will take to previous location;
+
+[11:47 AM] Prasad, Prasad
+
+To install
+
+sudo apt  install exuberant-ctags
+
+ 
+
+1. To generate ctags extension file to navigate
+ctags -R		
+
+to move to function => ctrl + ]
+
+to back from function => ctrl + t

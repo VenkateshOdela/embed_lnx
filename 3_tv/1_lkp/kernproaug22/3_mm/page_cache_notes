@@ -1,0 +1,27 @@
+-	A memory management unit (MMU), is hardware
+	-	that translate virtual memory addresses to physical addresses.
+	
+	
+	CPU      ------->       MMU       ----> 
+	     virtual Address             Physical Address
+	     
+	     
+-	Page Cache : 
+	-	The page cache consists of physical pages in RAM, the contents of which correspond to physical blocks on a disk.
+		
+	-	the page cache contains chunks of recently accessed files.
+		
+	-	Whenever the kernel begins a read operation—for example, when a process issues the read() system call—it first checks if the requisite data
+		is in the page cache. 
+		-	cache hit :
+			-	If it is in page cache,it will read the data directly out of RAM.
+			-	This is called a cache hit. 
+		-	cache miss :
+			-	If the data is not in the cache, called a cache miss, then it will read from disk.
+			
+	-	reading from disk very is a slow process.
+	
+	
+_______________________________________________________________________________________________________________________________________________________
+
+    

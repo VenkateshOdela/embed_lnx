@@ -1,0 +1,8 @@
+1. volatile
+2. static volatile
+3. const volatile
+    - const volatile is used for Read-Only RO Registers.
+4. pointer to whole array.
+5. double pointer.
+6. callback function
+7. dynamic memory allocation to integer and array; 

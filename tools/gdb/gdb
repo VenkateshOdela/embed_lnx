@@ -1,0 +1,102 @@
+
+ gdb - The GNU Debugger
+__________________________________________________
+
+ The purpose of a debugger such as GDB is to
+ - allow you to see what is going on "inside"another program while it executes -- or 
+ - what another program was doing at the moment it crashed.
+
+____________________________________________________________
+
+       GDB can do four main kinds of things (plus other things in support of these) to help you
+       catch bugs in the act:
+
+       ·   Start your program, specifying anything that might affect its behavior.
+q
+       ·   Make your program stop on specified conditions.
+
+       ·   Examine what has happened, when your program has stopped.
+
+       ·   Change things in your program, so you can experiment with correcting the effects of one
+           bug and go on to learn about another.
+_______________________________________________
+
+       GDB is invoked with the shell command "gdb". 
+       Once started, it reads commands from the terminal until you tell it to exit with the     GDB   command "quit".  
+      You can get online help from GDB itself by using the command "help".
+
+______________________________________________________________
+
+       1.You can run "gdb" with no arguments or options; but the most usual way to start GDB is with
+       one argument or two, specifying an executable program as the argument:
+
+               gdb program
+
+       example : gdb <a.out path>
+
+       2.You can also start with both an executable program and a core file specified:
+
+               gdb program core
+
+       example : gdb <a.out file path> <core file path > 
+______________________________________________________________________________
+
+bt  Backtrace: display the program stack.
+
+_______________________________________________________
+
+       quit Exit from GDB.
+________________________________________________________
+       -core=file
+       -c file
+           Use file file as a core dump to examine.
+_____________________________________________________________________
+
+https://www.cprogramming.com/debugging/segfaults.html
+__________________________________________________________________
+$gdb
+$help
+(gdb) help
+List of classes of commands:
+
+aliases -- Aliases of other commands
+breakpoints -- Making program stop at certain points
+data -- Examining data
+files -- Specifying and examining files
+internals -- Maintenance commands
+obscure -- Obscure features
+running -- Running the program
+stack -- Examining the stack
+status -- Status inquiries
+support -- Support facilities
+tracepoints -- Tracing of program execution without stopping the program
+user-defined -- User-defined commands
+
+Type "help" followed by a class name for a list of commands in that class.
+Type "help all" for the list of all commands.
+Type "help" followed by command name for full documentation.
+Type "apropos word" to search for commands related to "word".
+Command name abbreviations are allowed if unambiguous.
+____________________________________________________________________________________
+(gdb) complete b
+backtrace
+bookmark
+break
+break-range
+bt
+_____________________________________________________________________________________
+$ gcc -g main.c
+
+-g option adds debug information useful for gdb tool to analyze code.
+
+$ objdump -h ./a.out
+
+ this command is used to see is debug information available or not
+______________________________________________________________________________________
+$ gdb ./a.out
+$ list 
+  -- shows 10 lines first source code.
+  -- press enter till end of source code is reached to see all sourece code.
+$ run
+  -- use run commnd in gdb to start program
+  

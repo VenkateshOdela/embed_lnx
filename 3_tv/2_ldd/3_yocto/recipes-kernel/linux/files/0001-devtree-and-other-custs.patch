@@ -1,0 +1,101 @@
+From 1db306270ef8073ecda8d1f9a85363da2ea7bb91 Mon Sep 17 00:00:00 2001
+From: Raghu Bharadwaj <raghu@techveda.org>
+Date: Sat, 17 Dec 2022 10:51:27 +0530
+Subject: [PATCH] devtree and other custs
+
+---
+ Makefile                               |  2 +-
+ arch/arm/boot/dts/am335x-boneblack.dts | 36 ++++++++++++++++++++++++++
+ init/main.c                            |  7 +++++
+ 3 files changed, 44 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index af0523798..fe3525c2c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@
+ VERSION = 5
+ PATCHLEVEL = 19
+ SUBLEVEL = 15
+-EXTRAVERSION =
++EXTRAVERSION =.custbuild
+ NAME = Superb Owl
+ 
+ # *DOCUMENTATION*
+diff --git a/arch/arm/boot/dts/am335x-boneblack.dts b/arch/arm/boot/dts/am335x-boneblack.dts
+index 931219731..3aee88911 100644
+--- a/arch/arm/boot/dts/am335x-boneblack.dts
++++ b/arch/arm/boot/dts/am335x-boneblack.dts
+@@ -168,3 +168,39 @@ &gpio3 {
+ 		"NC",
+ 		"NC";
+ };
++
++/ {
++
++    vDev1: vDev-1 {
++        compatible = "vDev-Ax";
++        virt,size = <512>;
++        virt,permission = <0x03>;
++        virt,dev-serial = "VDEV_1";
++        virt,dev-id = <0x01>;
++    };
++
++    vDev2: vDev-2 {
++        compatible = "vDev-Bx";
++        virt,size = <512>;
++        virt,permission = <0x03>;
++        virt,dev-serial = "VDEV_2";
++        virt,dev-id = <0x02>;
++    };
++
++    vDev3: vDev-3 {
++        compatible = "vDev-Cx";
++        virt,size = <1024>;
++        virt,permission = <0x01>;
++        virt,dev-serial = "VDEV_3";
++        virt,dev-id = <0x03>;
++    };
++
++    vDev4: vDev-4 {
++        compatible = "vDev-Dx";
++        virt,size = <2048>;
++        virt,permission = <0x02>;
++        virt,dev-serial = "VDEV_4";
++        virt,dev-id = <0x04>;
++    };
++};
++
+diff --git a/init/main.c b/init/main.c
+index 1fe7942f5..145aaae1c 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -983,7 +983,11 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
+ 	setup_log_buf(0);
+ 	vfs_caches_init_early();
+ 	sort_main_extable();
++	
++	pr_notice("setting up syscall trap\n");
+ 	trap_init();
++
++	pr_notice("bringing up mm subsystem\n");
+ 	mm_init();
+ 
+ 	ftrace_init();
+@@ -996,6 +1000,7 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
+ 	 * timer interrupt). Full topology setup happens at smp_init()
+ 	 * time - but meanwhile we still have a functioning scheduler.
+ 	 */
++	pr_notice("setting up queues and initialize process scheduler\n"); 
+ 	sched_init();
+ 
+ 	if (WARN(!irqs_disabled(),
+@@ -1027,6 +1032,8 @@ asmlinkage __visible void __init __no_sanitize_address start_kernel(void)
+ 	context_tracking_init();
+ 	/* init some links before init_ISA_irqs() */
+ 	early_irq_init();
++
++	pr_notice("setting up irq descriptors\n");
+ 	init_IRQ();
+ 	tick_init();
+ 	rcu_init_nohz();

@@ -1,0 +1,24 @@
+Atomic fetch and operation macros
+------------------------------------
+        1. type __sync_fetch_and_add (type *ptr, type v, ...)
+        2. type __sync_fetch_and_sub (type *ptr, type v, ...)
+        3. type __sync_fetch_and_or (type *ptr, type v, ...)
+        4. type __sync_fetch_and_and (type *ptr, type value, ...)
+        5. type __sync_fetch_and_xor (type *ptr, type value, ...)
+
+        All above functions return value that had previously been in memory
+        before performing the suggested operation.
+
+Atomic operation and fetch macros
+------------------------------------
+        1. type __sync_add_and_fetch (type *ptr, type value, ...)
+        2. type __sync_sub_and_fetch (type *ptr, type value, ...)
+        3. type __sync_or_and_fetch (type *ptr, type value, ...)
+        4. type __sync_and_and_fetch (type *ptr, type value, ...)
+        5. type __sync_xor_and_fetch (type *ptr, type value, ...)
+        6. type __sync_nand_and_fetch (type *ptr, type value, ...)
+
+        All above functions return new value in memory after performing
+        the suggested operation.
+
+

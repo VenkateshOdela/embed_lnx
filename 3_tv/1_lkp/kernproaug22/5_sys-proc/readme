@@ -1,0 +1,30 @@
+
+   
+ -- malloc - usermode address -- translation (as similar to kmalloc translation)
+ 
+ cat /proc/filesystem
+ 
+ -- /proc  --> procfs is mounted to /proc
+ -- /sys   --> sysfs is mounted to /sys
+ 
+ -- /proc/sys
+   -- comm bw user space and kernel service;
+   
+ 
+ 
+ -- alternative to procfs -> sysfs
+    --
+    
+-- debugfs
+   -- for debugging operations;
+   -- debugfs is mounted default path : /sys/kernel/bebug
+   
+   root@ubuntu:/sys/kernel/debug# ls
+acpi   cleancache        devices_deferred  error_injection     gpio     mce             pmc_core  ras         sched_debug       suspend_stats  usb             x86
+bdi    clear_warn_once   dma_buf           extfrag             hid      memcg_slabinfo  pm_genpd  regmap      sched_features    swiotlb        virtio-ports    zswap
+block  clk               dri               fault_around_bytes  iosf_sb  opp             pm_qos    regulator   sleep_time        sync           vmmemctl
+cec    device_component  dynamic_debug     frontswap           kprobes  pinctrl         pwm       remoteproc  split_huge_pages  tracing        wakeup_sources
+
+  --
+   
+    

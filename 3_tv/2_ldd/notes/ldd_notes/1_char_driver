@@ -1,0 +1,187 @@
+	Char Drivers :
+		
+		-	char devices are called special files or device files.
+			-	these are located in /dev directory.
+			-	Special files for char drivers are identified by a “c”
+			-	Special files for block drivers are identified by a “b”
+	
+		-	VFS : virtual file system
+		-	devtmpfs - udev on /dev type devtmpfs (rw,nosuid,relatime,size=1971608k,nr_inodes=492902,mode=755)
+		-	Device files are managed as part of VFS subsystem of the kernel
+		
+		-	1. Device Number Registration :
+				-	register_chrdev_region()          	-	unregister_chrdev_region()
+				-	alloc_chrdev_region()
+		-	2. Make a char driver registration with VFS :
+				-	cdev_init()							-	cdev_del()
+				-	cdev_add()
+		-	3. Create Device files
+				-	class_create()						-	class_destroy()
+				-	device_create()						-	device_destroy()
+		
+		-	mknod - make block or character special files
+		- 	   b      create a block (buffered) special file		
+			   c, u   create a character (unbuffered) special file	
+			   p      create a FIFO
+		
+			-	sudo mknod /dev/abc c 190 0
+				-	c means char device
+				-	190 major number
+				-	0 means minor number
+			
+		-	Major and Minor Numbers :	
+			-	the major number identifies the driver associated with the device.
+				-	For example, /dev/null and /dev/zero are both managed by driver 1, 
+				    whereas virtual consoles and serial terminals are managed by driver 4;
+		    -	The minor number is used by the kernel to determine exactly which device is being
+				referred to.
+				-	4:0 /dev/rtc0, 4:1 /dev/rtc1, 4:2 /dev/rtc2, 4:3 /dev/rtc3.	
+			
+			-	static dev_t mydev;
+				-	Within the kernel, the 'dev_t' type (defined in <linux/types.h>) is used to hold device
+                    numbers—both the major and minor parts.		
+            -	MKDEV(int major, int minor);
+            	-	you have the major and minor numbers and need to turn them into a dev_t use MKDEV	
+   	        
+   	        -ALLOCATING DEVICE NUMBER :
+   	   		-	int register_chrdev_region(dev_t first, unsigned int count,char *name);
+   	   		
+   	   			-	registering device number when major and minor is known.
+   	   			-	second argument : 'count' is the total number of contiguous device numbers you are requesting.
+   	   
+   	        -	int alloc_chrdev_region(dev_t *dev, unsigned int firstminor,unsigned int count, char *name);
+   	        
+   	        	-	dynamically allocate major number.
+   	        	-	if driver is portable then it is good to use alloc_chrdev_region();
+   	        
+   	        -FREEING DEVICE NUMBER :	
+   	        -	void unregister_chrdev_region(dev_t first, unsigned int count); 
+   	        	-	Regardless of how you allocate your device numbers, unregister_chrdev_region() will free them when they are no longer in use.
+
+   	        -	The assigned major numbers are seen in /proc/devices
+   	        
+   	        
+   	        - DATA STRUCTURES :
+   	        -	Most of the fundamental driver operations involve three important kernel data structures, called file_operations , file ,and inode.
+   	        	-	struct file_operations
+   	        	-	strcut file
+   	        	-	struct inode
+   	        	
+   	        - file_operations structure:
+		        -	So far, we have reserved some device numbers for our use, but we have not yet connected any of our driver’s operations to those numbers. 
+		        	The file_operations structure is how a char driver sets up this connection.
+		        	
+		        -	The structure, defined in <linux/fs.h>, is a collection of function pointers.
+		        -	Conventionally, a file_operations structure or a pointer to one is called fops.
+		        
+		        -	The scull device driver implements only the most important device methods. Its
+					file_operations structure is initialized as follows:
+					
+						struct file_operations scull_fops = {
+							.owner = THIS_MODULE,
+							.llseek = scull_llseek,
+							.read = scull_read,
+							.write = scull_write,
+							.ioctl = scull_ioctl,
+							.open = scull_open,
+							.release = scull_release
+							.mmap = scull_mmap,
+						};
+						
+			- file Structure :
+				-	struct file , defined in <linux/fs.h>, is the second most important data structure used in device drivers.	
+					-	Note that a file has nothing to do with the FILE pointers of user-space programs. 
+						A FILE is defined in the C library and never appears in kernel code. 
+						A struct file , on the other hand, is a kernel structure that never appears in user programs.	
+						
+				-	The file structure represents an open file. (It is not specific to device drivers; every
+					open file in the system has an associated struct file in kernel space.) 
+					It is created by the kernel on open and is passed to any function that operates on the file, until
+					the last close. After all instances of the file are closed, the kernel releases the data
+					structure.
+					
+				-	In the kernel sources, a pointer to struct file is usually called either file or filp
+					(“file pointer”). We’ll consistently call the pointer filp to prevent ambiguities with
+					the structure itself. Thus, file refers to the structure and filp to a pointer to the
+					structure.
+					
+   	        - inode Structure
+   	        
+   	        	-	The inode structure is used by the kernel internally to represent files. Therefore, it is
+					different from the file structure that represents an open file descriptor. There can be
+					numerous file structures representing multiple open descriptors on a single file, but
+					they all point to a single inode structure.
+					
+					The inode structure contains a great deal of information about the file. As a general
+					rule, only two fields of this structure are of interest for writing driver code:
+					
+					dev_t i_rdev;
+						For inodes that represent device files, this field contains the actual device number.
+					
+					struct cdev *i_cdev;
+						struct cdev is the kernel’s internal structure that represents char devices; this
+					field contains a pointer to that structure when the inode refers to a char device
+					file.
+					
+			- Char Devie Registration :
+				-	As we mentioned, the kernel uses structures of type 'struct cdev' to represent char
+					devices internally. Before the kernel invokes your device’s operations, you must allo-
+					cate and register one or more of these structures.
+					
+				-	void cdev_init(struct cdev *cdev, struct file_operations *fops);
+						- initialize with file_operations to char driver.
+			    -	int cdev_add(struct cdev *dev, dev_t num, unsigned int count);
+			            -  add to the kernel.
+			    -	To remove a char device from the system, call:
+					-	void cdev_del(struct cdev *dev);
+					
+					
+			- why not require major number for each physical devices?
+				-	Single harddisk driver can handle if two hardrivers are connected. 
+				-	so minor number tells same type of devices , depend on common driver with one major number.
+				
+			-	static int cdrv_open(struct inode *inode, struct file *file)
+			-	Inode object
+				• Unix makes a clear distinction between the contents of a file and the information
+				about a file
+				• An inode is a VFS data structure(struct inode) that holds general information about a
+				file.
+				• Whereas VFS ‘file’ data structure (struct file) tracks interaction on an opened file by
+				the user process
+				• Inode contains all the information needed by the filesystem to handle a file.
+				• Each file has its own inode object, which the filesystem uses to identify the file
+				• Each inode object is associated with an inode number, which uniquely identifies the
+				file within the filesystem.
+				• The inode object is created and stored in memory as and when a new file (regular or
+				device ) gets created
+				
+			- class_create() and device_create() and udev (hotplug agent)
+				-	class_create()
+					-	Create a directory in sysfs : /sys/class/<your_class_name>
+				-	device_create()
+					-	This function creates a subdirectory under /sys/class/<your_class_name> with your device name.
+						-	/sys/class/your_class_name/your_device_name
+						
+					-	and /dev/your_device_name is created.
+						-	In Linux, you can create a device file dynamically(on demand), i.e you need not manually
+							create the device files under /dev directory to access your hardware.
+						-	User-level program such as udevd can populate /dev directory with device files dynamically.
+				
+			- sysfs
+				-	/sys/bus/
+				-	/sys/devices/
+				-	/sys/class/	
+				
+			-  what actions to do?
+				- cat /etc/udev/rules.d
+				
+				- different driver can have different rules :
+				- cat /etc/udev/rules.d/myrules.d
+				
+				- man 7 udev
+				
+				
+
+		
+			
+			            

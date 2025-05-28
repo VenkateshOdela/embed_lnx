@@ -1,0 +1,19 @@
+- components of bus communication.
+  - IP components
+  - logic components
+  
+ - Bus Terminology:
+  - Master
+  - Slave
+  - Arbiter
+  - Decoder
+  - Bridge
+  
+ - Bus signal lines
+ 	- address lines
+  	- data lines
+  	- control lines
+  	
+  	
+  - memory maped and port maped
+    

@@ -1,0 +1,54 @@
+-	Device Tree
+    
+    -	Device Tree (DT), is a data exchange format used for exchanging hardware description data with the software or OS.
+    
+    -	More specifically, it is a description of hardware that is readable by an operating system so
+		that the operating system doesn't need to hard code details of the machine.
+		
+	-	non-discoverable devices/ Platform devices : RTC, Temperature Sensor, GPS , ethernet.
+	-	Seld Discoverable Devices : Keyboard, Flash Drive
+	
+	- 	Device tree file tells information about non-discoverable device/platform device information to OS.  
+		
+	-	DT is simply a data structure that describes the hardware.
+		
+    - .dtsi/.dts files
+            |
+            | .dtsi or .dts file is compiled by the device tree compiler
+            |
+        .dtb file
+            |
+            | 
+            |
+        Bootloader
+            |
+            |	.dtb is loaded by the bootloder into memory
+            |
+          Kernel. 
+          
+
+    -	.dts <- Device Tree Source          - Board Specific device tree file
+        .dtsi <- Device Tree Source Include - SoC specific device tree file
+        
+	-	.dtb <- Devide Tree Blob
+	
+	-	Device tree is a collection of device nodes.
+	-	A ‘device node’ or simply called ‘a node’ represents a device. 		
+	-	They also have parent and child relationship, and every device tree must have one root node
+	
+	-	Root Node :
+		- 	The device tree has a single root node of which all other device nodes
+			are descendants. The full path to the root node /
+		
+	-	Node name is in the format :
+		-	node-name@unit-address
+			-	example:	uart@fe001000
+		-	The unit-address must match the first address specified in the reg property of the node.
+		
+	-	In Linux every device is represented by an instance of	struct device.
+	
+	-	Device tree overlays :
+		-	DT overlays are device tree patches(dtbo) which are used to patch or
+			modify the existing main device tree blob(dtb).
+			
+			

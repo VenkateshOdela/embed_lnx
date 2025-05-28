@@ -1,0 +1,94 @@
+Linux PC Boot Process:
+
+   Power On
+      '
+      '
+     BIOS
+      |
+     MBR
+      |
+     GRUB
+      |
+     Kernel
+      |
+     Init 
+      |
+     Runlevels
+____________________________________________________________________________________________________
+
+
+BIOS:
+ 
+ - BIOS : Basic Input/Output System.
+ - When the Linux system powers up, the BIOS performs a Power On Self Test (POST). 
+   - POST verify the hardware(keybaord,harddisk,RAM,Disaply etc) present in the machine;
+ 
+ - After a successful test, BIOS checks the MBR (Master Boot Record) in the hard disk. 
+ - BIOS uses the Master Boot Record (MBR).
+________________________________________________________________________________________________________________
+
+MBR:
+ - MBR stands for Master Boot Record. 
+ - The MBR is a 512-byte code that is located on the first sector of the bootable/hard drive which is usually /dev/sda or /dev/hda.
+   - Primary boot-loader or O/S loader information stored in 1st 446 bytes.
+   - Partition table information stored in the next 64 bytes. 
+   - MBR validation check(MBR Signature/Magic no) stored in the last 2 bytes.
+
+ - MBR stores information about any boot loader; in our case, it is having information about GRUB boot loader.
+
+________________________________________________________________________________________________________________
+GRUB:
+ - GRUB: Grand Unified Bootloader.
+ - Once the BIOS locates the grub bootloader, it executes and loads it onto the main memory (RAM).
+ - GRUB is the program which makes the computer just smart enough to find the operating system kernel and load it into memory.
+
+ - The grub menu displays one screen, It allows you to select the Linux kernel version that you’d want to use. 
+ - Also, in a dual-boot setup where you have multiple OS installations, the grub menu allows you to select which OS to boot into.
+
+ - GRUB’s main objective is to load the Linux kernel onto the main memory(RAM)and turns control of the system over to the kernel.
+
+ - Grub configuration file is /boot/grub/grub.conf.
+   - linux	/boot/vmlinuz-5.4.0-131-generic
+   - initrd	/boot/initrd.img-5.4.0-131-generic
+ - As you notice from the above info, it contains kernel and initrd image.
+ - So, in simple terms GRUB just loads and executes Kernel and initrd images.
+
+______________________________________________________________________________________________________________________
+
+Kernel:
+
+ - Once the selected Linux kernel is loaded by the bootloader, the selected kernel mounts the root file system and initializes the 
+   /sbin/init program commonly referred to as init.
+
+ - The kernel then mounts the initial RAM disk (initrd) which is a temporary virtual root filesystem until the real root filesystem is mounted. 
+
+ - All kernels are located in the /boot directory together with the initial RAM disk image.
+    - vmlinuz-5.4.0-131-generic
+    - initrd.img-5.4.0-131-generic
+ 
+__________________________________________________________________________________________________________________________
+Init:
+  -  Init program,Looks at the /etc/inittab file to decide the Linux run level.
+	Following are the available run levels
+	0 – halt
+	1 – Single user mode
+	2 – Multiuser, without NFS
+	3 – Full multiuser mode
+	4 – unused
+	5 – X11
+	6 – reboot
+   
+   - SystemV and SystemD startup sequence is different;
+______________________________________________________________________________________________________________________________
+
+Runlevel:
+
+  - Depending on your default init run level setting, the system will execute the programs from one of the following directories.
+	Run level 0 – /etc/rc.d/rc0.d/
+	Run level 1 – /etc/rc.d/rc1.d/
+	Run level 2 – /etc/rc.d/rc2.d/
+	Run level 3 – /etc/rc.d/rc3.d/
+	Run level 4 – /etc/rc.d/rc4.d/
+	Run level 5 – /etc/rc.d/rc5.d/
+	Run level 6 – /etc/rc.d/rc6.d/
+________________________________________________________________________________________________________________________________

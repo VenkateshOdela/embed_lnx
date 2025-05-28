@@ -1,0 +1,49 @@
+Linux PCI Driver stack
+=====================
+
+1. Domain controller Driver: 
+          - Runs at boot
+	  - Physical bus scan and system resource assignment(irq, addresses)
+	  - enumerate pci_dev object for each device and pci_bus object 
+            for each bus.
+	  - each function in a multifuntion device is seen by kernel as 
+            saperate device. 
+
+
+2. Mid layer
+	  -- linux kernel pci management code
+	  -- abstraction of pci protocol specific operations from high 
+             level drivers
+	  -- provides abstract functions for power managment / data 
+             transfer and other control operations
+	  -- Provides an abstract interface for upper layer drivers and 
+             adapter driver.
+
+3. High level driver
+         -- register with pci mid layer
+	 -- provide device specific operations
+	 -- register driver with appropriate kernel subsystem/framework.
+
+
+
+
+structure of pci device initialization code in a driver
+======================================================
+Drivers handling PCI devices in Linux kernel must deal with following ops.
+
+1. Register with Mid layer(pci-core) -  pci_register_driver()
+2. Enable Device( initiate power management op)  - pci_enable_device() - 
+   pci_disable_device()
+3. Set Dma addr size(DMA mask) - pci_set_dma()
+4. Enable Bus mastering - pci_set_master()
+5. Enable MSI | MSI-X if supported - pci_enable_(msi|msix)()
+6. Register isr's -  request_irq()
+7. Access Device system Resource information - pci_resource_start() -  
+   pci_resource_len()
+8. Reserve/claim  Device address space - pci_request_region() 
+9. map device address space into kernel's linear address(IOMEM) -  pci_iomap();
+10.Communicate with device
+
+
+
+

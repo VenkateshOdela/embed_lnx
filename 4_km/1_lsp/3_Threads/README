@@ -1,0 +1,11 @@
+POSIX Threads.
+-------------
+On most recent Linux distributions the standard Makefile should compile these rpograms sucessfully. 
+The alternative, makefile-explicit, is provided for any systems that need the include and thread library paths explicity defining.
+
+thread1.c  -  a simple program using threads.
+
+thread2.c  -  a program that executes 2 threads simultaneously.  You may have to wait a few seconds before
+this program produces output.
+
+thread3.c  -  a program that synchronizes threads using seamphores.
