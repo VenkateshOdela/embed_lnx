@@ -40,8 +40,8 @@ const int const_gbl_uninitvar; // ?? (.bss of a.out but not in .bss of .o)
 void func()
 {
  
- static int func_stat_initvar = 20; // .data
- static int func_stat_uninitvar; // .bss
+ static int func_stat_initvar = 20; // .data(initiliazed static varaible)
+ static int func_stat_uninitvar; // .bss(uninitialized static varaible;)
  
 }
 
