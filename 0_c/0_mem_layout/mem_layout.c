@@ -79,7 +79,7 @@ int main() // .text
 
      heap
   
-     .bss (unintilaised global and static varaibles)
+     .bss (unintilaised global and static varaibles)(.bss block started by symbol)
  
      .data (data segment) (initliased global and static varaibles)
 
@@ -228,4 +228,44 @@ Disassembly of section .rodata:
   36:   6c                      insb   (%dx),%es:(%rdi)
   37:   6c                      insb   (%dx),%es:(%rdi)
   38:   65 64 20 00             gs and %al,%fs:(%rax)
+*/
+
+
+/*
+To Understand more about .data  section:
+int x=10; // initliazed data section .data , initalized x  global varaible
+int y; // unintilized data section .bss , unintialized y global variable
+
+microcontroller:(ROM+RAM)
+ROM:(non- volatile memory)(when you loss power_cycle/reset microcontroller, it whould not loss the data)
+ - in ROM , .data ,.text section are stored.
+ - the elf will have this values of global x=10.
+ - when MCU is programmed, this x=10 value which present in elf, will be loaded into ROM of microcontroller,
+   so, when power cycle/reset x=10 is not lost and these are some important values which software require to run the system
+RAM:(volatile memory)
+ - What if X value to be written as x=20, During the Program execution we copy the .data section .text section from ROM to RAM.
+ - Then we do modification on .data section in RAM x=20, which will have not effect on the value of x=10 in ROM when we power_cyle/reset.
+ 
+Why .bss section is not stored in ROM (as part of elf)?
+ - .bss section contains only in RAM. 
+ - .bss section contains unintialzed variables with all zero, 
+ - if for example some memorr/frame buffers in Kbs/Mbs which are unintialized variables which we can assume to be zero.
+    - then it will waste of memory in ROM.
+ - 
+
+
+ -When power_cycle/resert sections are copied from ROM to RAM.
+---------		---------
+|	|		|	|
+|.data	|		|.data	|	
+|.text	|   ------> 	|.text	|
+|	|		|	|
+| ROM   |		|RAM	|
+|	|		|	|
+---------		---------
+
+ROM : Contains LOAD address.
+RAM : Logical Address
+.text contains initilization code which will take care of this.
+
 */
