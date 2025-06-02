@@ -269,3 +269,26 @@ RAM : Logical Address
 .text contains initilization code which will take care of this.
 
 */
+
+/*
+ hosted environment: OS based machine
+ freestanding environment: microcontroller based system.
+*/
+
+/*
+  .text section
+
+   - where code resides.
+   - where this code converted to assembly code.
+   - 
+
+*/
+
+/*
+  .stack section
+   - how much we need to utilize?
+   - stack section reside in RAM.
+   - we reserve some section in RAM for stack.
+   - cpu have stackpointer register which tells/holds memory_address in stack section.
+   - sp stackpointer -> points to stack.  
+*/
