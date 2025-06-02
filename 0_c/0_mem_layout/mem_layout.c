@@ -47,7 +47,9 @@ void func()
 
 void gbl_func()
 {
- printf("global function called \n");
+   static int gbl_func_stat_var_int =10; // .data initlaized static local variable.
+   static int gbl_func_stat_var_unint; // .bss unintialized static local varaible.
+   printf("global function called \n");
 }
 
 void stat_func()
@@ -59,7 +61,7 @@ void stat_func()
 int main() // .text
 {
 	int local_initvar =30; // stack :this local variables appear in runtime
-    int local_uninitvar;  //  stack :this local variables appear in runtime
+   int local_uninitvar;  //  stack :this local variables appear in runtime
            
     func(); // .text
 
@@ -291,4 +293,40 @@ RAM : Logical Address
    - we reserve some section in RAM for stack.
    - cpu have stackpointer register which tells/holds memory_address in stack section.
    - sp stackpointer -> points to stack.  
+*/
+
+
+/*
+Disassembly of section .bss:
+
+0000000000000000 <stat_uninitvar>:
+   0:   00 00                   add    %al,(%rax)
+        ...
+
+0000000000000004 <func_stat_uninitvar.2327>:
+   4:   00 00                   add    %al,(%rax)
+        ...
+
+0000000000000008 <gbl_func_stat_var_unint.2331>:
+   8:   00 00                   add    %al,(%rax)
+*/
+
+/*
+Disassembly of section .data:
+
+0000000000000000 <gbl_initvar>:
+   0:   0a 00                   or     (%rax),%al
+        ...
+
+0000000000000004 <stat_initvar>:
+   4:   14 00                   adc    $0x0,%al
+        ...
+
+0000000000000008 <func_stat_initvar.2326>:
+   8:   14 00                   adc    $0x0,%al
+        ...
+
+000000000000000c <gbl_func_stat_var_int.2330>:
+   c:   0a 00                   or     (%rax),%al
+        ...
 */
